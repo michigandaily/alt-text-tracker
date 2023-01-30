@@ -1,21 +1,39 @@
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { JSDOM } from "jsdom";
-import { csvFormat } from "d3-dsv";
+import { csvFormat, csvParse } from "d3-dsv";
 
 const main = async () => {
+  let after = "2022-12-01T00:00:00Z";
   let offset = 0;
   const size = 10;
 
+  let previous = Array();
+
+  if (existsSync("./data.csv")) {
+    console.log("Reading previous data...");
+    previous = csvParse(readFileSync("./data.csv").toString());
+    after = `${previous.at(-1).date}T00:00:00Z`;
+  }
+
+  const imgs = new Map();
+  const imgs_with_alt = new Map();
+
+  if (previous.length > 0) {
+    previous.forEach(({ date, images_published, images_published_with_alt_text }) => {
+      imgs.set(date, +images_published);
+      imgs_with_alt.set(date, +images_published_with_alt_text);
+    });
+  }
+
   const url = new URL("https://www.michigandaily.com/wp-json/wp/v2/posts");
-  url.searchParams.set("after", "2022-12-01T00:00:00Z");
+  url.searchParams.set("after", after);
   url.searchParams.set("offset", offset);
 
   let response = await fetch(url.href);
   let posts = await response.json();
 
-  let imgs = new Map();
-  let imgs_with_alt = new Map();
   while (response.ok && posts.length > 0) {
+    console.log(`Reading posts from ${url.href}...`);
     posts.forEach(async (post) => {
       const [date] = post.date.split("T");
 
@@ -54,10 +72,12 @@ const main = async () => {
     }
   }
 
-  const data = Array.from(imgs).map(([k, v]) => ({ date: k, images: v, images_with_alt_text: imgs_with_alt.get(k) }));
+  const data = Array.from(imgs)
+    .map(([k, v]) => ({ date: k, images_published: v, images_published_with_alt_text: imgs_with_alt.get(k) }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const total_images = data.map(d => d.images).reduce((sum, addend) => sum + addend, 0);
-  const total_images_with_alt_text = data.map(d => d.images_with_alt_text).reduce((sum, addend) => sum + addend, 0);
+  const total_images = data.map(d => d.images_published).reduce((sum, addend) => sum + addend, 0);
+  const total_images_with_alt_text = data.map(d => d.images_published_with_alt_text).reduce((sum, addend) => sum + addend, 0);
   console.log({ total_images_with_alt_text, total_images, percentage: total_images_with_alt_text / total_images * 100 })
   writeFileSync("./data.csv", csvFormat(data));
 }
