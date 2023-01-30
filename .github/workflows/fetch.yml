@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Fetch data
-      run: yarn fetch
+      run: node a11y.js
     - name: Push data to GitHub
       run: |
         git add ./data.csv
