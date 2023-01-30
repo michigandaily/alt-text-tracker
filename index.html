@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Michigan Daily Alternative Text</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .x-axis .tick text {
+        display: none;
+      }
+
+      html,
+      body {
+        font-family: "Open Sans", sans-serif;
+        font-size: 16px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      figure {
+        margin: 0;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.85rem;
+      }
+
+      .legend-item div {
+        width: 1rem;
+        height: 1rem;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tracking The Daily's alternative text</h1>
+    <div class="legend">
+      <div class="legend-item">
+        <div style="background-color: lightgreen"></div>
+        <span>Images published with alternative text</span>
+      </div>
+      <div class="legend-item">
+        <div style="background-color: LightCoral"></div>
+        <span>Images published without alternative text</span>
+      </div>
+    </div>
+    <figure></figure>
+    <script type="module">
+      import { csv } from "d3-fetch";
+      import { autoType } from "d3-dsv";
+      import { rollup } from "d3-array";
+      import { select } from "d3-selection";
+      import { axisBottom } from "d3-axis";
+      import { scaleOrdinal } from "d3-scale";
+      import { build, StackedColumnChart } from "@michigandaily/bore";
+
+      const main = async () => {
+        const data = await csv(
+          "https://raw.githubusercontent.com/MichiganDaily/alt-text-tracker/main/data.csv",
+          autoType
+        );
+
+        const tidy = data
+          .map((d) => [
+            {
+              date: d.date,
+              status: "Images published with alternative text",
+              value: d.images_published_with_alt_text,
+            },
+            {
+              date: d.date,
+              status: "Images published without alternative text",
+              value: d.images_published - d.images_published_with_alt_text,
+            },
+          ])
+          .flat();
+
+        const index = rollup(
+          tidy,
+          (v) => Object.fromEntries(v.map((o) => [o.status, o.value])),
+          (d) => d.date
+        );
+
+        const height = 500;
+
+        const color = scaleOrdinal()
+          .domain([
+            "Images published with alternative text",
+            "Images published without alternative text",
+          ])
+          .range(["lightgreen", "LightCoral"]);
+
+        const svg = select("figure")
+          .append("svg")
+          .datum(index)
+          .call(
+            build(
+              new StackedColumnChart()
+                .color(({ key }) => color(key))
+                .height(height)
+                .xAxis(function (scale) {
+                  return (g) => {
+                    const width = this.getResponsiveWidth();
+                    const { bottom } = this.margin();
+                    g.attr(
+                      "transform",
+                      `translate(0, ${height - bottom})`
+                    ).call(
+                      axisBottom(scale).tickFormat((d) =>
+                        d.toISOString().substring(0, 10)
+                      )
+                    );
+                  };
+                })
+                .label((d) => null)
+            )
+          );
+
+        svg
+          .selectAll("rect")
+          .on("mouseenter", (e) => {
+            const target = e.target;
+            const parent = target.parentNode;
+            const index = Array.from(parent.children).indexOf(target);
+
+            select(`.x-axis .tick:nth-child(${index + 2}) text`).style(
+              "display",
+              "unset"
+            );
+          })
+          .on("mouseleave", (e) => {
+            const target = e.target;
+            const parent = target.parentNode;
+            const index = Array.from(parent.children).indexOf(target);
+
+            select(`.x-axis .tick:nth-child(${index + 2}) text`).style(
+              "display",
+              "none"
+            );
+          });
+      };
+
+      main();
+    </script>
+  </body>
+</html>

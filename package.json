@@ -1,7 +1,17 @@
 {
   "type": "module",
   "dependencies": {
+    "@michigandaily/bore": "michigandaily/bore",
+    "d3-array": "^3.2.2",
+    "d3-axis": "^3.0.0",
     "d3-dsv": "^3.0.1",
+    "d3-fetch": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
     "jsdom": "^21.0.0"
+  },
+  "devDependencies": {
+    "sass": "^1.57.1",
+    "vite": "^4.0.4"
   }
 }
