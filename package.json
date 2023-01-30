@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@michigandaily/bore": "michigandaily/bore",
+    "async": "^3.2.4",
     "d3-array": "^3.2.2",
     "d3-axis": "^3.0.0",
     "d3-dsv": "^3.0.1",

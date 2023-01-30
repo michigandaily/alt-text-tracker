@@ -1,6 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { JSDOM } from "jsdom";
 import { csvFormat, csvParse } from "d3-dsv";
+import { eachLimit } from "async";
 
 const main = async () => {
   let after = "2022-12-01T00:00:00-05:00";
@@ -37,7 +38,7 @@ const main = async () => {
 
   while (response.ok && posts.length > 0) {
     console.log(`Reading posts from ${url.href}...`);
-    for await (const post of posts) {
+    await eachLimit(posts, size, async (post) => {
       const [date] = post.date.split("T");
 
       if (!imgs.has(date)) {
@@ -67,7 +68,7 @@ const main = async () => {
         imgs.set(date, imgs.get(date) + images.length);
         imgs_with_alt.set(date, imgs_with_alt.get(date) + images.filter(image => image.alt.length > 0).length);
       }
-    }
+    });
 
     url.searchParams.set("offset", +url.searchParams.get("offset") + size);
     response = await fetch(url.href);
