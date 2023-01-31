@@ -17,6 +17,11 @@
         display: none;
       }
 
+      .x-axis .tick:first-of-type text,
+      .x-axis .tick:last-of-type text {
+        display: block;
+      }
+
       html,
       body {
         font-family: "Open Sans", sans-serif;
@@ -48,6 +53,15 @@
   </head>
   <body>
     <h1>Tracking The Daily's alternative text</h1>
+    <p>
+      The Daily has been tracking the number of images published with and
+      without alternative text since December 2022. The chart below shows the
+      number of images published with and without alternative text each day.
+    </p>
+    <p>
+      Hover over each column for more information:
+      <span id="column-information"></span>
+    </p>
     <div class="legend">
       <div class="legend-item">
         <div style="background-color: lightgreen"></div>
@@ -126,31 +140,39 @@
                     );
                   };
                 })
-                .label((d) => null)
             )
           );
 
         svg
           .selectAll("rect")
-          .on("mouseenter", (e) => {
-            const target = e.target;
+          .on("mouseenter", function ({ target }) {
             const parent = target.parentNode;
             const index = Array.from(parent.children).indexOf(target);
 
-            select(`.x-axis .tick:nth-child(${index + 2}) text`).style(
-              "display",
-              "unset"
+            const tick = select(`.x-axis .tick:nth-child(${index + 2}) text`);
+            tick.style("display", "unset");
+
+            const datum = select(this).datum().data;
+            const date = tick.text();
+
+            const wo = datum["Images published without alternative text"];
+            const w = datum["Images published with alternative text"];
+            const total = w + wo;
+
+            select("#column-information").text(
+              `On ${date}, ${w} of ${total} images published had alternative text. (${(w / total * 100).toPrecision(3)}%)`
             );
           })
-          .on("mouseleave", (e) => {
-            const target = e.target;
+          .on("mouseleave", ({ target }) => {
             const parent = target.parentNode;
             const index = Array.from(parent.children).indexOf(target);
 
             select(`.x-axis .tick:nth-child(${index + 2}) text`).style(
               "display",
-              "none"
+              null
             );
+
+            select("#column-information").text("");
           });
       };
 
