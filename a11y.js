@@ -48,7 +48,7 @@ const main = async () => {
         imgs_with_alt.set(date, 0);
       }
 
-      const feature = post._links["wp:featuredmedia"].at(0);
+      const feature = post._links["wp:featuredmedia"]?.at(0);
       if (feature && feature.href) {
         const _image_response = await fetch(feature.href);
         if (_image_response.ok) {
