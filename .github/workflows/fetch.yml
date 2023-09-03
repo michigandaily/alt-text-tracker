@@ -17,12 +17,12 @@ jobs:
     - name: Set up JavaScript
       uses: actions/setup-node@v3
       with:
-        node-version: 19.x
+        node-version: 20.x
         cache: 'yarn'
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Fetch data
-      run: node a11y.js
+      run: node alt.js
     - name: Push data to GitHub
       run: |
         git add ./data.csv
