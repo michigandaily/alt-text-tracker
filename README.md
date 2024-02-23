@@ -1,5 +1,26 @@
-# alt-text-tracker
+# Alt text tracker
 
-The `alt.js` script runs every day to count the total number of images published to The Michigan Daily, and the number of images with alternative text. If a data file does not already exist, the script will retrieve counts since December 2022. Otherwise, the script will just retrieve data from within the last 24 hours, appending to the data file.
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-The script is generally accurate, though it does introduce mistakes from time to time. You can correct these mistakes by deleting the `data.csv` file and rerunning `alt.js`.
+## Developing
+
+Install dependencies with `pnpm install`, then to start a development server, run:
+
+```bash
+pnpm run dev
+
+# or start the server and open the app in a new browser tab
+pnpm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+pnpm run build
+```
+
+You can preview the production build with `pnpm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
