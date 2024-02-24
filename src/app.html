@@ -1,9 +1,31 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>The Michigan Daily Alternative Text</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+		  href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
+		  rel="stylesheet"
+		/>
+		<style>
+			body {
+				font-family: "Open Sans", sans-serif;
+				font-size: 16px;
+			}
+			@media (prefers-color-scheme: dark) {
+				body {
+					color: white;
+					background: rgb(37, 37, 37);
+				}
+				img {
+					filter: invert(1);
+				}
+			}
+		</style>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
