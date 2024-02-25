@@ -1,29 +1,29 @@
 <script lang="ts">
-    export let route:string;
-    export let title:string;
+	export let route: string;
+	export let title: string;
 </script>
 
 <a class="navbutton" href={route}>
-    {title}
+	{title}
 </a>
 
 <style lang="scss">
-    .navbutton {
-        width: 15rem;
-        aspect-ratio: 6/1;
+	.navbutton {
+		width: 15rem;
+		aspect-ratio: 6/1;
 
-        color: inherit;
-        text-decoration-line: none;
-        border: 2px solid lightskyblue;
-        border-radius: 1rem;
-        background: rgb(235, 235, 235);
+		color: inherit;
+		text-decoration-line: none;
+		border: 2px solid lightskyblue;
+		border-radius: 1rem;
+		background: rgb(235, 235, 235);
 
-        display: grid;
-        place-items: center;
-    }
-    @media (prefers-color-scheme: dark) {
-        .navbutton {
-            background: rgb(56, 56, 56);
-        }
-    }
+		display: grid;
+		place-items: center;
+	}
+	@media (prefers-color-scheme: dark) {
+		.navbutton {
+			background: rgb(56, 56, 56);
+		}
+	}
 </style>
