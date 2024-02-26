@@ -1,4 +1,4 @@
-name = "alt-text-tracker"
+name = "michigan-daily-alt-text-tracker"
 main = "worker/index.ts"
 compatibility_date = "2024-02-23"
 
