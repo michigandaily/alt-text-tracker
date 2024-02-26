@@ -48,7 +48,7 @@ function parseImageData(
 }
 
 function parseArticleData(post: Article, image_data: Record<string, DateEntry>) {
-	const date = post.date.split('T')[0];
+	const [date] = post.date.split('T');
 
 	// Check if there already exists a date entry. If not, initialize one.
 	// If exists, add one more published article to the article count.
@@ -88,17 +88,9 @@ function parseArticleData(post: Article, image_data: Record<string, DateEntry>) 
 	});
 }
 
-export interface Env {
-	DB: D1Database;
-}
-
-export default {
-	// The scheduled handler is invoked at the interval set in our wrangler.toml's
-	// [[triggers]] configuration.
-	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-		const image_data: Record<string, DateEntry> = {};
-
-		await fetch('https://www.michigandaily.com/wp-json/tmd/v1/posts_query/')
+async function parsePostQuery(page:number, after:string, image_data: Record<string, DateEntry>) {
+	let total_pages:number = 1;
+	await fetch(`https://www.michigandaily.com/wp-json/tmd/v1/posts_query/?num_posts=200&page=${page}&after=${after}`)
 			.then((resp) => {
 				if (!resp.ok) {
 					throw new Error(`${resp.status}: ${resp.statusText}`);
@@ -107,6 +99,7 @@ export default {
 				return resp.json();
 			})
 			.then((data) => {
+				total_pages = data.total_pages;
 				data.posts.forEach((post: Article) => {
 					if (post.content) {
 						parseArticleData(post, image_data);
@@ -116,6 +109,33 @@ export default {
 			.catch((error: Error) => {
 				console.error('Error: Failed to fetch posts - ', error);
 			});
+	return total_pages;
+}
+
+export interface Env {
+	DB: D1Database;
+}
+
+export default {
+	// The scheduled handler is invoked at the interval set in our wrangler.toml's
+	// [[triggers]] configuration.
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+		const image_data: Record<string, DateEntry> = {};
+		
+		// Get the date of the latest entry, and start fetching data at the date
+		const DB_resp:{date: string}|null = await env.DB.prepare(
+			`SELECT date FROM date_entries ORDER BY date DESC`
+		).first();
+		const after:string = DB_resp?.date ?? "2022-12-31";
+
+		const total_pages = await parsePostQuery(0, after, image_data);
+
+		//If more than one page, sequentially fetch the rest of the pages
+		for (let i = 1; i < total_pages; i++) {
+			await parsePostQuery(i, after, image_data);
+		}
+
+		console.log(image_data);
 
 		// Insert each date_entry one by one into the D1 Database.
 		// If a date already exists, overwrite it.
