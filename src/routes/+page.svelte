@@ -1,64 +1,40 @@
 <script lang="ts">
 	import Navbutton from '$lib/components/navbutton.svelte';
-	import type { DateEntry } from '$lib/types';
+	import Logo from '$lib/assets/logo-small.svg';
+	import * as d3 from 'd3';
 
-	import logo from '$lib/assets/logo-small.svg';
+	const padding = 32;
+	$: innerWidth = 1300;
+	$: innerHeight = 600;
+	$: width = innerWidth / 1.1;
+	$: height = innerHeight / 1.75;
 
-	import { csv } from 'd3-fetch';
-	import { autoType } from 'd3-dsv';
-	import { rollup } from 'd3-array';
-	import { select } from 'd3-selection';
-	import { axisBottom } from 'd3-axis';
-	import { scaleOrdinal } from 'd3-scale';
+	const lastWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+	const lastMonth = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000);
+	const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
+	$: timerange = lastYear;
 
-	const main = async () => {
-		const data = await csv(
-			'https://raw.githubusercontent.com/MichiganDaily/alt-text-tracker/main/data.csv',
-			autoType
-		);
+	$: category = 0;
 
-		const tidy = data
-			.map((d) => [
-				{
-					date: d.date,
-					status: 'Images published with alternative text',
-					value: d.images_published_with_alt_text
-				},
-				{
-					date: d.date,
-					status: 'Images published without alternative text',
-					value: d.images_published - d.images_published_with_alt_text
-				}
-			])
-			.flat();
+	let gx: SVGGElement;
+	let gy: SVGGElement;
 
-		const index = rollup(
-			tidy,
-			(v) => Object.fromEntries(v.map((o) => [o.status, o.value])),
-			(d) => d.date
-		);
+	$: x = d3.scaleUtc([timerange, new Date()], [padding, width - padding]);
+	$: y = d3.scaleLinear([0, 100], [height - padding, padding]);
 
-		const height = 500;
-
-		const color = scaleOrdinal()
-			.domain([
-				'Images published with alternative text',
-				'Images published without alternative text'
-			])
-			.range(['lightgreen', 'LightCoral']);
-	};
-
-	main();
+	$: d3.select(gx).call(d3.axisBottom(x));
+	$: d3.select(gy).call(d3.axisLeft(y));
 </script>
 
+<svelte:window bind:innerHeight bind:innerWidth />
 <nav>
 	<ul>
 		<li>
 			<img
-				src={logo}
+				src={Logo}
 				alt="The Michigan Daily logo"
-				width="50px"
-				height="50px"
+				width="35px"
+				height="35px"
 				style="float: left; padding: 10px;"
 			/>
 			<h1>Alt Text Tracker</h1>
@@ -76,39 +52,55 @@
 		since December 2022. The chart below shows the number of images published with and without
 		alternative text each day.
 	</p>
-	<p>
-		Hover over each column for more information:
-		<span id="column-information"></span>
-	</p>
-	<div class="legend">
-		<div class="legend-item">
-			<div style="background-color: lightgreen"></div>
-			<span>Images published with alternative text</span>
+	<div class="options">
+		<div class="legend">
+			<div class="legend-item">
+				<div style="background-color: lightgreen"></div>
+				<span>Images published with alternative text</span>
+			</div>
+			<div class="legend-item">
+				<div style="background-color: LightCoral"></div>
+				<span>Images published without alternative text</span>
+			</div>
 		</div>
-		<div class="legend-item">
-			<div style="background-color: LightCoral"></div>
-			<span>Images published without alternative text</span>
-		</div>
+		<select bind:value={timerange}>
+			<option value={lastWeek}>Last week</option>
+			<option value={lastMonth}>Last month</option>
+			<option value={lastYear} selected>Last year</option>
+		</select>
+		<select bind:value={category}>
+			<option>All</option>
+			<option>News</option>
+			<option>Sports</option>
+			<option>Opinion</option>
+		</select>
 	</div>
-	<figure></figure>
+
+	<figure>
+		<svg {width} {height}>
+			<g bind:this={gx} transform="translate({0}, {height - padding})" />
+			<g bind:this={gy} transform="translate({padding}, {0})" />
+		</svg>
+	</figure>
 </main>
 
 <style>
-	.x-axis .tick text {
-		display: none;
+	h1 {
+		font-size: 1.1rem;
 	}
-
-	.x-axis .tick:first-of-type text,
-	.x-axis .tick:last-of-type text {
-		display: block;
-	}
-
 	h2 {
 		font-size: 1.25rem;
 	}
 
 	figure {
 		margin: 0;
+	}
+
+	.options {
+		display: grid;
+		place-items: center;
+		grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+		gap: 10px;
 	}
 
 	.legend-item {
@@ -122,6 +114,14 @@
 		width: 1rem;
 		height: 1rem;
 		display: inline-block;
+	}
+
+	select {
+		display: inline-block;
+		padding: 5px;
+		
+		font-size: 16px;
+		width: 200px;
 	}
 
 	ul {

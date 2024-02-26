@@ -9,7 +9,8 @@
 
 <style lang="scss">
 	.navbutton {
-		width: 15rem;
+		font-size: 14px;
+		width: 12rem;
 		aspect-ratio: 6/1;
 
 		color: inherit;
