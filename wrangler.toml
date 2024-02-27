@@ -12,3 +12,4 @@ crons = ["0 0 * * *"] # 0 0 * * * = run at the beginning of every day
 binding = "DB" # available in your Worker on env.DB
 database_name = "michigan-daily-alt-text-tracker"
 database_id = "90d3113e-ddda-4ab7-b7a3-d87ca2cf86e4"
+preview_database_id = "DB" # Required for Pages local development

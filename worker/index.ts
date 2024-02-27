@@ -12,7 +12,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import type { Article, Block, Image, DateEntry } from './types';
+import type { Article, Block, Image, DateEntry, PostsQuery } from './types';
 
 function parseImageData(
 	post: Article,
@@ -98,9 +98,11 @@ async function parsePostQuery(page:number, after:string, image_data: Record<stri
 
 				return resp.json();
 			})
-			.then((data) => {
-				total_pages = data.total_pages;
-				data.posts.forEach((post: Article) => {
+			.then((data:PostsQuery|unknown) => {
+				const query = data as PostsQuery;
+				
+				total_pages = query.total_pages;
+				query.posts.forEach((post: Article) => {
 					if (post.content) {
 						parseArticleData(post, image_data);
 					}
@@ -134,8 +136,6 @@ export default {
 		for (let i = 1; i < total_pages; i++) {
 			await parsePostQuery(i, after, image_data);
 		}
-
-		console.log(image_data);
 
 		// Insert each date_entry one by one into the D1 Database.
 		// If a date already exists, overwrite it.
