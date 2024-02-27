@@ -2,6 +2,36 @@
 	import Navbutton from '$lib/components/navbutton.svelte';
 	import Logo from '$lib/assets/logo-small.svg';
 	import * as d3 from 'd3';
+	import type { DateEntry } from '$lib/types';
+
+	export let data:{entries: Array<DateEntry>}|null;
+	let entries = data?.entries ?? [];
+
+	const tidy = entries.map((d:DateEntry) => [
+		{
+			date: d.date,
+			status: "Images published with alternative text",
+			value: d.images_published_with_alt_text
+		},
+		{
+			date: d.date,
+			status: "Images published without alternative text",
+			value: d.images_published - d.images_published_with_alt_text
+		}
+	]).flat()
+
+	const index = d3.rollup(
+		tidy,
+		(v) => Object.fromEntries(v.map((o) => [o.status, o.value])),
+		(d) => d.date
+	);
+
+	const color = d3.scaleOrdinal()
+		.domain([
+		"Images published with alternative text",
+		"Images published without alternative text",
+		])
+		.range(["lightgreen", "LightCoral"]);
 
 	const padding = 32;
 	$: innerWidth = 1300;
@@ -20,7 +50,7 @@
 	let gy: SVGGElement;
 
 	$: x = d3.scaleUtc([timerange, new Date()], [padding, width - padding]);
-	$: y = d3.scaleLinear([0, 100], [height - padding, padding]);
+	$: y = d3.scaleLinear(d3.extent(entries.map((d) => d.images_published)) as Iterable<Number>, [height - padding, padding]);
 
 	$: d3.select(gx).call(d3.axisBottom(x));
 	$: d3.select(gy).call(d3.axisLeft(y));
@@ -80,6 +110,11 @@
 		<svg {width} {height}>
 			<g bind:this={gx} transform="translate({0}, {height - padding})" />
 			<g bind:this={gy} transform="translate({padding}, {0})" />
+			{#each index as [date, values], i}
+			<g transform="translate({padding + i * 10}, {height - values["Images published with alternative text"] - padding})">
+				<rect fill="lightgreen" width={10} height={values["Images published with alternative text"]}/>
+			</g>
+			{/each}
 		</svg>
 	</figure>
 </main>
