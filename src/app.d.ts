@@ -2,8 +2,17 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
 		interface Platform {
-			DB: D1Database
+			env: {
+				DB: D1Database;
+			};
+			context: {
+				waitUntil(promise: Promise<unknown>): void;
+			};
+			caches: CacheStorage & { default: Cache };
 		}
 	}
 }
