@@ -88,29 +88,31 @@ function parseArticleData(post: Article, image_data: Record<string, DateEntry>) 
 	});
 }
 
-async function parsePostQuery(page:number, after:string, image_data: Record<string, DateEntry>) {
-	let total_pages:number = 1;
-	await fetch(`https://www.michigandaily.com/wp-json/tmd/v1/posts_query/?num_posts=200&page=${page}&after=${after}`)
-			.then((resp) => {
-				if (!resp.ok) {
-					throw new Error(`${resp.status}: ${resp.statusText}`);
-				}
+async function parsePostQuery(page: number, after: string, image_data: Record<string, DateEntry>) {
+	let total_pages: number = 1;
+	await fetch(
+		`https://www.michigandaily.com/wp-json/tmd/v1/posts_query/?num_posts=200&page=${page}&after=${after}`
+	)
+		.then((resp) => {
+			if (!resp.ok) {
+				throw new Error(`${resp.status}: ${resp.statusText}`);
+			}
 
-				return resp.json();
-			})
-			.then((data:PostsQuery|unknown) => {
-				const query = data as PostsQuery;
-				
-				total_pages = query.total_pages;
-				query.posts.forEach((post: Article) => {
-					if (post.content) {
-						parseArticleData(post, image_data);
-					}
-				});
-			})
-			.catch((error: Error) => {
-				console.error('Error: Failed to fetch posts - ', error);
+			return resp.json();
+		})
+		.then((data: PostsQuery | unknown) => {
+			const query = data as PostsQuery;
+
+			total_pages = query.total_pages;
+			query.posts.forEach((post: Article) => {
+				if (post.content) {
+					parseArticleData(post, image_data);
+				}
 			});
+		})
+		.catch((error: Error) => {
+			console.error('Error: Failed to fetch posts - ', error);
+		});
 	return total_pages;
 }
 
@@ -123,12 +125,12 @@ export default {
 	// [[triggers]] configuration.
 	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
 		const image_data: Record<string, DateEntry> = {};
-		
+
 		// Get the date of the latest entry, and start fetching data at the date
-		const DB_resp:{date: string}|null = await env.DB.prepare(
+		const DB_resp: { date: string } | null = await env.DB.prepare(
 			`SELECT date FROM date_entries ORDER BY date DESC LIMIT 1`
 		).first();
-		const after:string = DB_resp?.date ?? "2022-12-31";
+		const after: string = DB_resp?.date ?? '2022-12-31';
 
 		const total_pages = await parsePostQuery(0, after, image_data);
 
@@ -137,16 +139,19 @@ export default {
 			await parsePostQuery(i, after, image_data);
 		}
 
-		// Insert each date_entry one by one into the D1 Database.
-		// If a date already exists, overwrite it.
+		// Batch insert/update all date entries
+		const stmt = env.DB.prepare(
+			`INSERT OR REPLACE INTO date_entries 
+			(date, articles_published, images_published, images_published_with_alt_text, category_data, article_ids) VALUES
+			(?, ?, ?, ?, ?, ?)`
+		);
+
+		const batchUpdate: Array<D1PreparedStatement> = [];
+
 		Object.keys(image_data).forEach((date) => {
 			const entry: DateEntry = image_data[date];
-			env.DB.prepare(
-				`INSERT OR REPLACE INTO date_entries 
-				(date, articles_published, images_published, images_published_with_alt_text, category_data, article_ids) VALUES
-				(?, ?, ?, ?, ?, ?)`
-			)
-				.bind(
+			batchUpdate.push(
+				stmt.bind(
 					date,
 					entry.articles_published,
 					entry.images_published,
@@ -154,7 +159,10 @@ export default {
 					JSON.stringify(entry.category_data),
 					entry.article_ids.toString()
 				)
-				.run();
+			);
 		});
+
+		const info = await env.DB.batch(batchUpdate);
+		console.log(info);
 	}
 };
