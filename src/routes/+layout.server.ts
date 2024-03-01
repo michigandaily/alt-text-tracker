@@ -1,4 +1,5 @@
 import type { LayoutServerLoad } from './$types';
+import type { DateEntry } from '$lib/types';
 
 export const load: LayoutServerLoad = async ({ platform }) => {
 	const response = await platform?.env.DB.prepare(
@@ -6,6 +7,6 @@ export const load: LayoutServerLoad = async ({ platform }) => {
 	).all();
 
 	return {
-		entries: response?.results
+		entries: response?.results as Array<DateEntry>|[],
 	};
 };
