@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Navbutton from '$lib/components/navbutton.svelte';
-	import Logo from '$lib/assets/logo-small.svg';
 	import * as d3 from 'd3';
 	import type { DateEntry } from '$lib/types';
 
@@ -57,24 +55,7 @@
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
-<nav>
-	<ul>
-		<li>
-			<img
-				src={Logo}
-				alt="The Michigan Daily logo"
-				width="35px"
-				height="35px"
-				style="float: left; padding: 10px;"
-			/>
-			<h1>Alt Text Tracker</h1>
-		</li>
-		<li>
-			<Navbutton route="/posts" title="Track Specific Articles →" />
-		</li>
-	</ul>
-	<hr />
-</nav>
+
 <main>
 	<h2>Tracking The Daily's alternative text</h2>
 	<p>
@@ -120,9 +101,6 @@
 </main>
 
 <style>
-	h1 {
-		font-size: 1.1rem;
-	}
 	h2 {
 		font-size: 1.25rem;
 	}
@@ -157,18 +135,6 @@
 		
 		font-size: 16px;
 		width: 200px;
-	}
-
-	ul {
-		list-style: none;
-
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
-	}
-
-	li:last-child {
-		place-self: center end;
-		padding: 10px;
 	}
 
 	main {
