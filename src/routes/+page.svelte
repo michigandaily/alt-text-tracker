@@ -135,6 +135,9 @@
 		
 		font-size: 16px;
 		width: 200px;
+
+		color: var(--text-color-theme);
+		background: var(--secondary-color-theme);
 	}
 
 	main {

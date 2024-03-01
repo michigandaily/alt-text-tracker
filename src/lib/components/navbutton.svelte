@@ -24,7 +24,7 @@
 	}
 	@media (prefers-color-scheme: dark) {
 		.navbutton {
-			background: rgb(56, 56, 56);
+			background: var(--secondary-color-theme);
 		}
 	}
 </style>

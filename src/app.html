@@ -12,21 +12,30 @@
 		  rel="stylesheet"
 		/>
 		<style>
+			:root {
+				--primary-color-theme: white;
+				--secondary-color-theme: rgb(231, 231, 231);
+				--text-color-theme: black;
+			}
 			body {
 				font-family: "Open Sans", sans-serif;
 				font-size: 16px;
 			}
+			a {
+				color: inherit;
+			}
 			@media (prefers-color-scheme: dark) {
+				:root {
+					--primary-color-theme: rgb(37, 37, 37);
+					--secondary-color-theme: rgb(62, 62, 62);
+					--text-color-theme: white;
+				}
 				body {
-					color: white;
-					background: rgb(37, 37, 37);
+					color: var(--text-color-theme);
+					background: var(--primary-color-theme);
 				}
 				img {
 					filter: invert(1);
-				}
-				select {
-					color: white;
-					background: rgb(62, 62, 62);
 				}
 			}
 		</style>
