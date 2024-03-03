@@ -27,3 +27,10 @@ export interface Image {
     }>;
     alt: string;
 }
+
+export interface Block {
+    blockName: string;
+    data: Array<Image> | Image;
+    innerContent: Array<string>;
+    innerBlocks: Array<Block>;
+}

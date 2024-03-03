@@ -9,6 +9,7 @@
 		<li>
             {#if $page.url.pathname === "/"}
                 <img
+                    class="logo"
                     src={Logo}
                     alt="The Michigan Daily logo"
                     width="35px"
