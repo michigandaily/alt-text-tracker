@@ -13,7 +13,7 @@
 	const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
 	const all = new Date('2022-12-31');
 
-	$: category = 0;
+	$: category = null;
 
 	const gap = 0;
 	const padding = 32;
@@ -42,12 +42,16 @@
 			{
 				date: d.date,
 				status: 'Images published with alternative text',
-				value: d.images_published_with_alt_text
+				value: category
+					? JSON.parse(d.category_data)[category]?.images_published_with_alt_text ?? 0
+					: d.images_published_with_alt_text
 			},
 			{
 				date: d.date,
 				status: 'Images published',
-				value: d.images_published
+				value: category
+					? JSON.parse(d.category_data)[category]?.images_published ?? 0
+					: d.images_published
 			}
 		])
 		.flat()
@@ -73,18 +77,20 @@
 	$: d3.select(gx).call(d3.axisBottom(x));
 	$: d3.select(gy).call(d3.axisLeft(y));
 
-	function handleMouseOver(d:MouseEvent|FocusEvent, data: {date:string, values: Record<string, number>}) {
+	function handleMouseOver(
+		d: MouseEvent | FocusEvent,
+		data: { date: string; values: Record<string, number> }
+	) {
 		d3.select('.tooltip')
 			.style('opacity', 1)
-			.style('left', d.pageX  + 'px')
+			.style('left', d.pageX + 'px')
 			.style('top', d.pageY - 200 + 'px')
 			.text(
 				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
 			);
-		console.log(d)
-		
-		d3.selectAll('.stacked-bar')
-			.style('opacity', '0.25');
+		console.log(d);
+
+		d3.selectAll('.stacked-bar').style('opacity', '0.25');
 		d.target!.parentElement.style.opacity = 1;
 	}
 
@@ -98,37 +104,44 @@
 
 <main>
 	<div on:mouseover={handleMouseOut} on:focus={handleMouseOut} role="complementary">
-	<h2>Tracking The Daily's alternative text</h2>
-	<p>
-		The Daily has been tracking the number of images published with and without alternative text
-		since December 2022. The chart below shows the number of images published with and without
-		alternative text each day.
-	</p>
-	<div class="options">
-		<div class="legend">
-			<div class="legend-item">
-				<div style="background-color: lightgreen"></div>
-				<span>Images published with alternative text</span>
+		<h2>Tracking The Daily's alternative text</h2>
+		<p>
+			The Daily has been tracking the number of images published with and without alternative text
+			since December 2022. The chart below shows the number of images published with and without
+			alternative text each day.
+		</p>
+		<div class="options">
+			<div class="legend">
+				<div class="legend-item">
+					<div style="background-color: lightgreen"></div>
+					<span>Images published with alternative text</span>
+				</div>
+				<div class="legend-item">
+					<div style="background-color: LightCoral"></div>
+					<span>Images published without alternative text</span>
+				</div>
 			</div>
-			<div class="legend-item">
-				<div style="background-color: LightCoral"></div>
-				<span>Images published without alternative text</span>
-			</div>
+			<select bind:value={timerange}>
+				<option value={all}></option>
+				<option value={lastWeek}>Last week</option>
+				<option value={lastMonth}>Last month</option>
+				<option value={lastSixMonths}>Last six months</option>
+				<option value={lastYear}>Last year</option>
+			</select>
+			<select bind:value={category}>
+				<option value={null}>All</option>
+				<option value={46}>News</option>
+				<option value={44}>Sports</option>
+				<option value={31}>Opinion</option>
+				<option value={5}>Arts</option>
+				<option value={55}>Statement</option>
+				<option value={32}>MiC</option>
+				<option value={124}>Photos</option>
+				<option value={24}>Podcasts</option>
+				<option value={10327}>Videos</option>
+
+			</select>
 		</div>
-		<select bind:value={timerange}>
-			<option value={all}></option>
-			<option value={lastWeek}>Last week</option>
-			<option value={lastMonth}>Last month</option>
-			<option value={lastSixMonths}>Last six months</option>
-			<option value={lastYear}>Last year</option>
-		</select>
-		<select bind:value={category}>
-			<option>All</option>
-			<option>News</option>
-			<option>Sports</option>
-			<option>Opinion</option>
-		</select>
-	</div>
 	</div>
 	<figure>
 		<div class="tooltip"></div>

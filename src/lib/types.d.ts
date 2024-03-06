@@ -2,10 +2,7 @@ export interface DateEntry {
     date: string,
     images_published: number,
     images_published_with_alt_text: number,
-    category_data: Record<number, {
-        images_published: number,
-        images_published_with_alt_text: number,
-    }>
+    category_data: string,
     article_ids: Array<number>,
     articles_published: number,
 }
