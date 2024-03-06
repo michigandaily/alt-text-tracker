@@ -2,8 +2,8 @@
 	import * as d3 from 'd3';
 	import type { DateEntry } from '$lib/types';
 
-	export let data: { entries: Array<DateEntry> } | null;
-	let entries = data?.entries ?? [];
+	export let data;
+	let entries = data?.entries;
 
 	$: timerange = all;
 
@@ -88,7 +88,6 @@
 			.text(
 				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
 			);
-		console.log(d);
 
 		d3.selectAll('.stacked-bar').style('opacity', '0.25');
 		d.target!.parentElement.style.opacity = 1;
@@ -103,7 +102,8 @@
 <svelte:window bind:innerHeight bind:innerWidth />
 
 <main>
-	<div on:mouseover={handleMouseOut} on:focus={handleMouseOut} role="complementary">
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<section on:mouseover={handleMouseOut} on:focus={handleMouseOut} >
 		<h2>Tracking The Daily's alternative text</h2>
 		<p>
 			The Daily has been tracking the number of images published with and without alternative text
@@ -139,10 +139,9 @@
 				<option value={124}>Photos</option>
 				<option value={24}>Podcasts</option>
 				<option value={10327}>Videos</option>
-
 			</select>
 		</div>
-	</div>
+	</section>
 	<figure>
 		<div class="tooltip"></div>
 		<svg {width} {height}>
@@ -150,12 +149,12 @@
 			<g bind:this={gy} transform="translate({padding}, {0})" />
 			<g>
 				{#each index as [date, values]}
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<g
 						class="stacked-bar"
 						style="margin: 0; padding; 0; gap: 0;"
 						on:mouseover={(d) => handleMouseOver(d, { date, values })}
 						on:focus={(d) => handleMouseOver(d, { date, values })}
-						role="contentinfo"
 					>
 						<rect
 							fill="lightcoral"
@@ -186,6 +185,7 @@
 	figure {
 		margin: 0;
 	}
+
 	.tooltip {
 		position: absolute;
 		display: block;

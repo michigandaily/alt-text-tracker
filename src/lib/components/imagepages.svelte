@@ -7,7 +7,7 @@
     $: image = images[index];
 </script>
 <div style="display: flex; flex-flow: column nowrap; align-items: center; gap: 10px;">
-    <img srcset={parseSources(image)} alt="Needs alt text"/>
+    <img srcset={parseSources(image)} alt=""/>
     <div>
         <button on:click={() => index--} disabled={index === 0}>←</button>
         <button on:click={() => index++} disabled={index === images.length - 1} >→</button>

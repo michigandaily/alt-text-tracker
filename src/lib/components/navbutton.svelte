@@ -7,7 +7,7 @@
 	{title}
 </a>
 
-<style lang="scss">
+<style>
 	.navbutton {
 		font-size: 14px;
 		width: 12rem;

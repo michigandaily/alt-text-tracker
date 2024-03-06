@@ -13,7 +13,7 @@
 			<a href={article.permalink}>
 			<p>
 				<b>
-					{article.title.replace("<strong>", "").replace("</strong>", "")}
+					{@html article.title}
 				</b>
 			</p>
 			</a>
