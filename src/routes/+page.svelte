@@ -9,16 +9,17 @@
 
 	const lastWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
 	const lastMonth = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000);
+	const lastSixMonths = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000 * 6);
 	const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
 	const all = new Date('2022-12-31');
 
 	$: category = 0;
 
-	const gap = 1;
+	const gap = 0;
 	const padding = 32;
 	$: innerWidth = 1300;
 	$: innerHeight = 600;
-	$: width = innerWidth / 1.1;
+	$: width = innerWidth / 1.05;
 	$: height = innerHeight / 1.75;
 
 	let tidy = entries
@@ -72,31 +73,31 @@
 	$: d3.select(gx).call(d3.axisBottom(x));
 	$: d3.select(gy).call(d3.axisLeft(y));
 
-	// Function to handle mouseover event
-	function handleMouseOver(d, data) {
-		// Get mouse coordinates
-		let [xPos, yPos] = d3.pointer(d);
-
-		// Show the tooltip box
+	function handleMouseOver(d:MouseEvent|FocusEvent, data: {date:string, values: Record<string, number>}) {
 		d3.select('.tooltip')
-			.style('display', 'block')
-			.style('left', xPos + 'px')
-			.style('top', yPos + 'px')
+			.style('opacity', 1)
+			.style('left', d.pageX  + 'px')
+			.style('top', d.pageY - 200 + 'px')
 			.text(
-				`${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']}`
+				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
 			);
+		console.log(d)
+		
+		d3.selectAll('.stacked-bar')
+			.style('opacity', '0.25');
+		d.target!.parentElement.style.opacity = 1;
 	}
 
-	// Function to handle mouseout event
 	function handleMouseOut() {
-		// Hide the tooltip box
-		d3.select('.tooltip').style('display', 'none');
+		d3.select('.tooltip').transition().duration(50).style('opacity', 0);
+		d3.selectAll('.stacked-bar').style('opacity', 1);
 	}
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
 <main>
+	<div on:mouseover={handleMouseOut} on:focus={handleMouseOut} role="complementary">
 	<h2>Tracking The Daily's alternative text</h2>
 	<p>
 		The Daily has been tracking the number of images published with and without alternative text
@@ -118,7 +119,8 @@
 			<option value={all}></option>
 			<option value={lastWeek}>Last week</option>
 			<option value={lastMonth}>Last month</option>
-			<option value={lastYear} selected>Last year</option>
+			<option value={lastSixMonths}>Last six months</option>
+			<option value={lastYear}>Last year</option>
 		</select>
 		<select bind:value={category}>
 			<option>All</option>
@@ -126,6 +128,7 @@
 			<option>Sports</option>
 			<option>Opinion</option>
 		</select>
+	</div>
 	</div>
 	<figure>
 		<div class="tooltip"></div>
@@ -135,11 +138,10 @@
 			<g>
 				{#each index as [date, values]}
 					<g
+						class="stacked-bar"
 						style="margin: 0; padding; 0; gap: 0;"
 						on:mouseover={(d) => handleMouseOver(d, { date, values })}
-						on:mouseout={() => handleMouseOut}
-						on:focus={() => {}}
-						on:blur={() => {}}
+						on:focus={(d) => handleMouseOver(d, { date, values })}
 						role="contentinfo"
 					>
 						<rect
@@ -173,7 +175,8 @@
 	}
 	.tooltip {
 		position: absolute;
-		display: none;
+		display: block;
+		opacity: 0;
 		padding: 5px;
 		background-color: white;
 		color: black;
