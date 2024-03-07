@@ -3,10 +3,11 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"worker-dev": "npx wrangler dev --test-scheduled",
-		"db-dev": "npx wrangler pages dev .svelte-kit/cloudflare --live-reload --local --d1 DB=DB",
+		"worker": "npx wrangler dev --test-scheduled",
+		"clear": "./bin/clear",
+		"init": "./bin/init", 
 		"dev": "vite dev",
-		"build": "vite build -w",
+		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -16,7 +17,7 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20240222.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/adapter-cloudflare": "^4.1.0",
+		"@sveltejs/adapter-cloudflare": "https://gitpkg.now.sh/sveltejs/kit/packages/adapter-cloudflare?cloudflare-adapter-dev&scripts.postinstall=%26%26%20pnpm%20build",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/d3": "^7.4.3",

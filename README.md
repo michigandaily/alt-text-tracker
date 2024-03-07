@@ -4,8 +4,11 @@ Everything you need to build a Svelte project, powered by [`create-svelte`](http
 
 ## Developing
 
-Install dependencies with `pnpm install`, then to start a development server, run:
+Install dependencies with `pnpm install`
 
+To set up the local database, run `pnpm run init`. It may take a minute to fetch all the data.
+
+Then, to open your local development environment, run
 ```bash
 pnpm run dev
 
