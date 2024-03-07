@@ -4,8 +4,9 @@
 	"private": true,
 	"scripts": {
 		"worker": "npx wrangler dev --test-scheduled",
+		"init": "./bin/init",
+		"update": "./bin/update",
 		"clear": "./bin/clear",
-		"init": "./bin/init", 
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",

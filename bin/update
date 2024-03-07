@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -Eeuo pipefail
+
+echo "Setting up a localhost worker and running cron job to populate database..."
+mkdir -p .wrangler/log
+nohup pnpm run worker > .wrangler/log/worker.log &
+curl http://localhost:8787/__scheduled
+
+rm -f .wrangler/log/worker.log
+
+echo "Successfully populated database! ✅"

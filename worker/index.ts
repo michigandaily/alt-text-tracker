@@ -128,7 +128,7 @@ export default {
 
 		// Get the date of the latest entry, and start fetching data at the date
 		const DB_resp: { date: string } | null = await env.DB.prepare(
-			`SELECT MAX(date) FROM date_entries`
+			`SELECT date FROM date_entries ORDER BY date DESC LIMIT 1`
 		).first();
 		const after: string = DB_resp?.date ?? '2022-12-31';
 
