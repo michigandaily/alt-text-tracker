@@ -6,6 +6,31 @@ function addImageWithoutAltText(image: Image, imageList: Array<Image>) {
 	}
 }
 
+function parseBlock(block: Block, images: Array<Image>) {
+	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
+		addImageWithoutAltText(block.data, images);
+	} else if (block.blockName == 'core/gallery') {
+		block.innerBlocks.forEach((block) => {
+			if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
+				addImageWithoutAltText(block.data, images);
+			}
+		});
+	} else if (
+		(block.blockName == 'jetpack/tiled-gallery' || block.blockName == 'jetpack/slideshow') &&
+		Array.isArray(block.data)
+	) {
+		block.data.forEach((image: Image) => {
+			addImageWithoutAltText(image, images);
+		});
+	} else if (block.blockName == "jetpack/image-compare" && Array.isArray(block.data)) {
+		block.data.forEach((image: Image) => {
+			addImageWithoutAltText(image, images);
+		})
+	} else if (block.blockName == "core/columns" || block.blockName == "core/column") {
+		block.innerBlocks.forEach((block) => parseBlock(block, images));
+	}
+}
+
 // Worker uses a similar way of parsing image content. Is there a way
 // to prevent code duplication?
 export function parseContent(image: Image, content: Array<Block>) {
@@ -13,22 +38,7 @@ export function parseContent(image: Image, content: Array<Block>) {
 
 	addImageWithoutAltText(image, images);
 	content.forEach((block: Block) => {
-		if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
-			addImageWithoutAltText(block.data, images);
-		} else if (block.blockName == 'core/gallery') {
-			block.innerBlocks.forEach((block) => {
-				if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
-					addImageWithoutAltText(block.data, images);
-				}
-			});
-		} else if (
-			(block.blockName == 'jetpack/tiled-gallery' || block.blockName == 'jetpack/slideshow') &&
-			Array.isArray(block.data)
-		) {
-			block.data.forEach((image: Image) => {
-				addImageWithoutAltText(image, images);
-			});
-		}
+		parseBlock(block, images);
 	});
 
 	return images;
