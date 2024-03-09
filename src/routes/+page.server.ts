@@ -7,6 +7,6 @@ export const load: PageServerLoad = async ({ platform }) => {
 	).all();
 
 	return {
-		entries: response?.results as Array<DateEntry>|[],
+		entries: response?.results as Array<DateEntry> | []
 	};
 };

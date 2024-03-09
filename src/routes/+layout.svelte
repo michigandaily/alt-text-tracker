@@ -2,42 +2,44 @@
 	import Navbutton from '$lib/components/navbutton.svelte';
 	import Logo from '$lib/assets/logo-small.svg';
 
-    import { page } from '$app/stores';
+	import { page } from '$app/stores';
 </script>
+
 <nav>
 	<ul>
 		<li>
-            {#if $page.url.pathname === "/"}
-                <img
-                    class="logo"
-                    src={Logo}
-                    alt="The Michigan Daily logo"
-                    width="35px"
-                    height="35px"
-                    style="float: left; padding: 10px;"
-                />
-                <h1>Alt Text Tracker</h1>
-            {:else}
-                <Navbutton route="/" title="← Back" />
-            {/if}
+			{#if $page.url.pathname === '/'}
+				<img
+					class="logo"
+					src={Logo}
+					alt="The Michigan Daily logo"
+					width="35px"
+					height="35px"
+					style="float: left; padding: 10px;"
+				/>
+				<h1>Alt Text Tracker</h1>
+			{:else}
+				<Navbutton route="/" title="← Back" />
+			{/if}
 		</li>
-        <li>
-            {#if $page.url.pathname === "/"}
-            <Navbutton route="/posts" title="Track Specific Articles →" />
-            {/if}
-        </li>
+		<li>
+			{#if $page.url.pathname === '/'}
+				<Navbutton route="/posts" title="Track Specific Articles →" />
+			{/if}
+		</li>
 	</ul>
 	<hr />
 </nav>
 <main>
 	<slot />
 </main>
+
 <style>
-    h1 {
+	h1 {
 		font-size: 1.1rem;
 	}
 
-    ul {
+	ul {
 		list-style: none;
 
 		display: grid;
@@ -48,5 +50,4 @@
 		place-self: center end;
 		padding: 10px;
 	}
-    
 </style>

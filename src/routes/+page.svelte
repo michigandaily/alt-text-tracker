@@ -103,7 +103,7 @@
 
 <main>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<section on:mouseover={handleMouseOut} on:focus={handleMouseOut} >
+	<section on:mouseover={handleMouseOut} on:focus={handleMouseOut}>
 		<h2>Tracking The Daily's alternative text</h2>
 		<p>
 			The Daily has been tracking the number of images published with and without alternative text

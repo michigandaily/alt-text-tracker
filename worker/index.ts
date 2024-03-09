@@ -101,7 +101,6 @@ async function parsePostQuery(page: number, after: string, image_data: Record<st
 			return resp.json() as Promise<PostsQuery>;
 		})
 		.then((query) => {
-
 			total_pages = query.total_pages;
 			query.posts.forEach((post: Article) => {
 				if (post.content) {
@@ -126,11 +125,12 @@ export default {
 		const image_data: Record<string, DateEntry> = {};
 
 		// Get the date of the latest entry, and start fetching data at the date
-		const DB_resp:Record<string, string>| null = await env.DB.prepare(
+		const DB_resp: Record<string, string> | null = await env.DB.prepare(
 			`SELECT MAX(date) FROM date_entries`
 		).first();
 
-		const after: string = DB_resp ? DB_resp["MAX(date)"] : '2022-12-31';
+		const after: string = DB_resp ? DB_resp['MAX(date)'] ?? '2022-12-31' : '2022-12-31';
+		console.log(after);
 
 		const total_pages = await parsePostQuery(0, after, image_data);
 
