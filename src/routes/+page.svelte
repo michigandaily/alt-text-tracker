@@ -91,10 +91,8 @@
 	}
 
 	function handleMouseOut(d: MouseEvent) {
-		if (d.toElement.nodeName !== 'rect') {
-			d3.select('.tooltip').style('display', 'none');
-			d3.selectAll('.stacked-bar').style('opacity', 1);
-		}
+	d3.select('.tooltip').style('display', 'none');
+	d3.selectAll('.stacked-bar').style('opacity', 1);
 	}
 </script>
 
