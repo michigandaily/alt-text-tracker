@@ -1,19 +1,20 @@
 import type { PageServerLoad } from './$types';
-import type { Article, DateEntry } from '$lib/types';
+import type { Article } from '$lib/types';
 
-export const load: PageServerLoad = async ({ parent, url }) => {
-	let { entries }: { entries: Array<DateEntry> } = await parent();
-	entries = entries.filter((entry: DateEntry) => entry.article_ids.length !== 0);
+export const load: PageServerLoad = async ({ platform, url }) => {
+	const page = parseInt(url.searchParams.get('page') ?? '0');
 
-	const page = parseInt(url.searchParams.get('page') ?? '0')
-	const offset = (entries.length ?? 0) - page * 5;
+	const response = await platform?.env.DB.prepare(
+		`SELECT article_ids FROM date_entries 
+		WHERE LENGTH(article_ids) > 0
+		ORDER BY date DESC LIMIT ${page * 5}, 5`
+	).all();
 
-	const ids = entries
-		?.slice(offset - 5, offset)
-		.map((entry) => entry.article_ids)
-		.flat().reverse();
+	const ids = response?.results.map((resp:Array<{article_ids: string}>|unknown) => (
+		(resp as {article_ids: string}).article_ids.split(",")
+	)).flat().filter((id) => id) ?? [];
 
-	const articles: Array<Article> = await fetch(
+	const articles: Array<Article> = ids.length > 0 ? await fetch(
 		`https://michigandaily.com/wp-json/tmd/v1/posts/?ids=${ids}&content=true&image=true`
 	)
 		.then((resp) => {
@@ -29,7 +30,7 @@ export const load: PageServerLoad = async ({ parent, url }) => {
 		.catch((error) => {
 			console.error(error);
 			return [];
-		});
+		}) : [];
 
 	return {
 		articles,

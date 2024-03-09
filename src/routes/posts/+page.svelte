@@ -26,7 +26,7 @@
 	{#if data.page > 0}
 		<a href={`/posts/?page=${data.page - 1}`}>← Back</a>
 	{/if}
-	{#if data.page * 5 < data.entries.length}
+	{#if data.articles.length > 0}
     	<a href={`/posts/?page=${data.page + 1}`}>Next →</a>
 	{/if}
 </footer>
@@ -51,7 +51,7 @@
 		width: 100%;
 		border-radius: 10px;
 		place-items: center;
-		place-content: start;
+		place-content: center;
 
 		background: var(--secondary-color-theme);
 	}
