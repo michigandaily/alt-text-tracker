@@ -98,10 +98,9 @@ async function parsePostQuery(page: number, after: string, image_data: Record<st
 				throw new Error(`${resp.status}: ${resp.statusText}`);
 			}
 
-			return resp.json();
+			return resp.json() as Promise<PostsQuery>;
 		})
-		.then((data: PostsQuery | unknown) => {
-			const query = data as PostsQuery;
+		.then((query) => {
 
 			total_pages = query.total_pages;
 			query.posts.forEach((post: Article) => {
