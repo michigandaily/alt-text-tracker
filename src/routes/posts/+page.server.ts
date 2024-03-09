@@ -27,10 +27,10 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 							throw Error(`${resp.status} ${resp.statusText}`);
 						}
 
-						return resp.json();
+						return resp.json() as Promise<Array<Article>>;
 					})
-					.then((data: Array<Article> | unknown) => {
-						return data as Array<Article>;
+					.then((data) => {
+						return data;
 					})
 					.catch((error) => {
 						console.error(error);
