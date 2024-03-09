@@ -22,11 +22,11 @@ function parseBlock(block: Block, images: Array<Image>) {
 		block.data.forEach((image: Image) => {
 			addImageWithoutAltText(image, images);
 		});
-	} else if (block.blockName == "jetpack/image-compare" && Array.isArray(block.data)) {
+	} else if (block.blockName == 'jetpack/image-compare' && Array.isArray(block.data)) {
 		block.data.forEach((image: Image) => {
 			addImageWithoutAltText(image, images);
-		})
-	} else if (block.blockName == "core/columns" || block.blockName == "core/column") {
+		});
+	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column') {
 		block.innerBlocks.forEach((block) => parseBlock(block, images));
 	}
 }

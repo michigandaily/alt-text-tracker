@@ -77,10 +77,7 @@
 	$: d3.select(gx).call(d3.axisBottom(x));
 	$: d3.select(gy).call(d3.axisLeft(y));
 
-	function handleMouseOver(
-		d: MouseEvent,
-		data: { date: string; values: Record<string, number> }
-	) {
+	function handleMouseOver(d: MouseEvent, data: { date: string; values: Record<string, number> }) {
 		d3.select('.tooltip')
 			.style('display', 'block')
 			.style('left', d.pageX + 'px')
@@ -93,12 +90,11 @@
 		d.target!.style.opacity = 1;
 	}
 
-	function handleMouseOut(d) {
-		if (d.toElement.nodeName !== "rect") {
+	function handleMouseOut(d: MouseEvent) {
+		if (d.toElement.nodeName !== 'rect') {
 			d3.select('.tooltip').style('display', 'none');
 			d3.selectAll('.stacked-bar').style('opacity', 1);
 		}
-		
 	}
 </script>
 
@@ -152,7 +148,12 @@
 	</section>
 	<figure>
 		<div class="tooltip"></div>
-		<svg {width} {height}>
+		<svg {width} {height} role="img" aria-labelledby="chart-title chart-desc">
+			<title id="chart-title"></title>
+			<!-- TODO: more descriptive -->
+			<desc id="chart-desc">
+				Amount of images published with alternative text every day over a period of time
+			</desc>
 			<g bind:this={gx} transform="translate({0}, {height - padding})" />
 			<g bind:this={gy} transform="translate({padding}, {0})" />
 			<g>

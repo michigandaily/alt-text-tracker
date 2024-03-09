@@ -47,7 +47,12 @@ function parseImageData(
 	}
 }
 
-function parseBlockData(post: Article, date: string, block: Block, image_data: Record<string, DateEntry>) {
+function parseBlockData(
+	post: Article,
+	date: string,
+	block: Block,
+	image_data: Record<string, DateEntry>
+) {
 	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
 		parseImageData(post, date, block.data, image_data);
 	} else if (block.blockName == 'core/gallery') {
@@ -63,12 +68,11 @@ function parseBlockData(post: Article, date: string, block: Block, image_data: R
 		block.data.forEach((image: Image) => {
 			parseImageData(post, date, image, image_data);
 		});
-	} 
-	else if (block.blockName == "jetpack/image-compare" && Array.isArray(block.data)) {
+	} else if (block.blockName == 'jetpack/image-compare' && Array.isArray(block.data)) {
 		block.data.forEach((image: Image) => {
 			parseImageData(post, date, image, image_data);
-		})
-	} else if (block.blockName == "core/columns" || block.blockName == "core/column") {
+		});
+	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column') {
 		block.innerBlocks.forEach((block) => parseBlockData(post, date, block, image_data));
 	}
 }
