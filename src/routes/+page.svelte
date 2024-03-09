@@ -78,11 +78,11 @@
 	$: d3.select(gy).call(d3.axisLeft(y));
 
 	function handleMouseOver(
-		d: MouseEvent | FocusEvent,
+		d: MouseEvent,
 		data: { date: string; values: Record<string, number> }
 	) {
 		d3.select('.tooltip')
-			.style('opacity', 1)
+			.style('display', 'block')
 			.style('left', d.pageX + 'px')
 			.style('top', d.pageY - 200 + 'px')
 			.text(
@@ -90,20 +90,22 @@
 			);
 
 		d3.selectAll('.stacked-bar').style('opacity', '0.25');
-		d.target!.parentElement.style.opacity = 1;
+		d.target!.style.opacity = 1;
 	}
 
-	function handleMouseOut() {
-		d3.select('.tooltip').transition().duration(50).style('opacity', 0);
-		d3.selectAll('.stacked-bar').style('opacity', 1);
+	function handleMouseOut(d) {
+		if (d.toElement.nodeName !== "rect") {
+			d3.select('.tooltip').style('display', 'none');
+			d3.selectAll('.stacked-bar').style('opacity', 1);
+		}
+		
 	}
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
 <main>
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<section on:mouseover={handleMouseOut} on:focus={handleMouseOut}>
+	<section>
 		<h2>Tracking The Daily's alternative text</h2>
 		<p>
 			The Daily has been tracking the number of images published with and without alternative text
@@ -156,11 +158,12 @@
 			<g>
 				{#each index as [date, values]}
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 					<g
 						class="stacked-bar"
 						style="margin: 0; padding; 0; gap: 0;"
-						on:mouseover={(d) => handleMouseOver(d, { date, values })}
-						on:focus={(d) => handleMouseOver(d, { date, values })}
+						on:mouseenter={(d) => handleMouseOver(d, { date, values })}
+						on:mouseout={(d) => handleMouseOut(d)}
 					>
 						<rect
 							fill="lightcoral"
@@ -194,8 +197,7 @@
 
 	.tooltip {
 		position: absolute;
-		display: block;
-		opacity: 0;
+		display: none;
 		padding: 5px;
 		background-color: white;
 		color: black;
