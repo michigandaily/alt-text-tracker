@@ -157,13 +157,12 @@
 			<g bind:this={gy} transform="translate({padding}, {0})" />
 			<g>
 				{#each index as [date, values]}
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 					<g
 						class="stacked-bar"
+						role="none"
 						style="margin: 0; padding; 0; gap: 0;"
 						on:mouseenter={(d) => handleMouseOver(d, { date, values })}
-						on:mouseout={(d) => handleMouseOut(d)}
+						on:mouseleave={(d) => handleMouseOut(d)}
 					>
 						<rect
 							fill="lightcoral"
