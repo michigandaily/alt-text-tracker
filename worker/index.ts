@@ -47,6 +47,32 @@ function parseImageData(
 	}
 }
 
+function parseBlockData(post: Article, date: string, block: Block, image_data: Record<string, DateEntry>) {
+	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
+		parseImageData(post, date, block.data, image_data);
+	} else if (block.blockName == 'core/gallery') {
+		block.innerBlocks.forEach((block) => {
+			if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
+				parseImageData(post, date, block.data, image_data);
+			}
+		});
+	} else if (
+		(block.blockName == 'jetpack/tiled-gallery' || block.blockName == 'jetpack/slideshow') &&
+		Array.isArray(block.data)
+	) {
+		block.data.forEach((image: Image) => {
+			parseImageData(post, date, image, image_data);
+		});
+	} 
+	else if (block.blockName == "jetpack/image-compare" && Array.isArray(block.data)) {
+		block.data.forEach((image: Image) => {
+			parseImageData(post, date, image, image_data);
+		})
+	} else if (block.blockName == "core/columns" || block.blockName == "core/column") {
+		block.innerBlocks.forEach((block) => parseBlockData(post, date, block, image_data));
+	}
+}
+
 function parseArticleData(post: Article, image_data: Record<string, DateEntry>) {
 	const [date] = post.date.split('T');
 
@@ -69,22 +95,7 @@ function parseArticleData(post: Article, image_data: Record<string, DateEntry>) 
 
 	// Parse images within the article itself
 	post.content.forEach((block: Block) => {
-		if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
-			parseImageData(post, date, block.data, image_data);
-		} else if (block.blockName == 'core/gallery') {
-			block.innerBlocks.forEach((block) => {
-				if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
-					parseImageData(post, date, block.data, image_data);
-				}
-			});
-		} else if (
-			(block.blockName == 'jetpack/tiled-gallery' || block.blockName == 'jetpack/slideshow') &&
-			Array.isArray(block.data)
-		) {
-			block.data.forEach((image: Image) => {
-				parseImageData(post, date, image, image_data);
-			});
-		}
+		parseBlockData(post, date, block, image_data);
 	});
 }
 
@@ -130,7 +141,6 @@ export default {
 		).first();
 
 		const after: string = DB_resp ? DB_resp['MAX(date)'] ?? '2022-12-31' : '2022-12-31';
-		console.log(after);
 
 		const total_pages = await parsePostQuery(0, after, image_data);
 

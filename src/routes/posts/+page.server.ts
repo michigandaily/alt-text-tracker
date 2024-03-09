@@ -15,8 +15,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 			.map((resp: Array<{ article_ids: string }> | unknown) =>
 				(resp as { article_ids: string }).article_ids.split(',')
 			)
-			.flat()
-			.filter((id) => id) ?? [];
+			.flat() ?? [];
 
 	const articles: Array<Article> =
 		ids.length > 0
