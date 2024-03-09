@@ -81,7 +81,7 @@
 		d3.select('.tooltip')
 			.style('display', 'block')
 			.style('left', d.pageX + 'px')
-			.style('top', d.pageY + 'px')
+			.style('top', d.pageY - 200 + 'px')
 			.text(
 				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
 			);
