@@ -14,6 +14,7 @@ nohup pnpm run worker > .wrangler/log/worker.log &
 curl http://localhost:8787/__scheduled
 
 rm -f .wrangler/log/worker.log
+kill -9 $(lsof -ti:8787)
 echo "Successfully populated database! ✅"
 
 echo "Initialization complete. Run pnpm run dev to start development."

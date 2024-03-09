@@ -4,9 +4,10 @@ set -Eeuo pipefail
 
 echo "Setting up a localhost worker and running cron job to populate database..."
 mkdir -p .wrangler/log
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --file=migrations/000-init.sql
 nohup pnpm run worker > .wrangler/log/worker.log &
 curl http://localhost:8787/__scheduled
 
 rm -f .wrangler/log/worker.log
-
+kill -9 $(lsof -ti:8787)
 echo "Successfully populated database! ✅"
