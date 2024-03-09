@@ -121,25 +121,31 @@
 					<span>Images published without alternative text</span>
 				</div>
 			</div>
-			<select bind:value={timerange}>
-				<option value={all}></option>
-				<option value={lastWeek}>Last week</option>
-				<option value={lastMonth}>Last month</option>
-				<option value={lastSixMonths}>Last six months</option>
-				<option value={lastYear}>Last year</option>
-			</select>
-			<select bind:value={category}>
-				<option value={null}>All</option>
-				<option value={46}>News</option>
-				<option value={44}>Sports</option>
-				<option value={31}>Opinion</option>
-				<option value={5}>Arts</option>
-				<option value={55}>Statement</option>
-				<option value={32}>MiC</option>
-				<option value={124}>Photos</option>
-				<option value={24}>Podcasts</option>
-				<option value={10327}>Videos</option>
-			</select>
+			<div>
+				<label for="timerange">Select timerange:</label>
+				<select bind:value={timerange}>
+					<option value={all}></option>
+					<option value={lastWeek}>Last week</option>
+					<option value={lastMonth}>Last month</option>
+					<option value={lastSixMonths}>Last six months</option>
+					<option value={lastYear}>Last year</option>
+				</select>
+			</div>
+			<div>
+				<label for="category">Select category:</label>
+				<select bind:value={category}>
+					<option value={null}>All</option>
+					<option value={46}>News</option>
+					<option value={44}>Sports</option>
+					<option value={31}>Opinion</option>
+					<option value={5}>Arts</option>
+					<option value={55}>Statement</option>
+					<option value={32}>MiC</option>
+					<option value={124}>Photos</option>
+					<option value={24}>Podcasts</option>
+					<option value={10327}>Videos</option>
+				</select>
+			</div>
 		</div>
 	</section>
 	<figure>

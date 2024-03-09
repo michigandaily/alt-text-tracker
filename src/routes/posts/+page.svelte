@@ -3,12 +3,11 @@
 	import { parseContent } from "$lib/parse";
 
 	export let data;
-	$: articles = data.articles;
 </script>
 <section style="max-width: 1200px; margin: 0 auto; ">
 	<h3>Recent Articles without Alt Text</h3>
 	<ul>
-		{#each articles as article}
+		{#each data.articles as article}
 		<li>
 			<a href={article.permalink}>
 			<p>
