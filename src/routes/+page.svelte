@@ -81,7 +81,7 @@
 		d3.select('.tooltip')
 			.style('display', 'block')
 			.style('left', d.pageX + 'px')
-			.style('top', d.pageY - 200 + 'px')
+			.style('top', d.pageY + 'px')
 			.text(
 				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
 			);
@@ -90,9 +90,9 @@
 		d.target!.style.opacity = 1;
 	}
 
-	function handleMouseOut(d: MouseEvent) {
-	d3.select('.tooltip').style('display', 'none');
-	d3.selectAll('.stacked-bar').style('opacity', 1);
+	function handleMouseOut() {
+		d3.select('.tooltip').style('display', 'none');
+		d3.selectAll('.stacked-bar').style('opacity', 1);
 	}
 </script>
 
@@ -161,7 +161,7 @@
 						role="none"
 						style="margin: 0; padding; 0; gap: 0;"
 						on:mouseenter={(d) => handleMouseOver(d, { date, values })}
-						on:mouseleave={(d) => handleMouseOut(d)}
+						on:mouseleave={handleMouseOut}
 					>
 						<rect
 							fill="lightcoral"
