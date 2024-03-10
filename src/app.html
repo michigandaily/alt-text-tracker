@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>The Michigan Daily Alternative Text</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--primary-color-theme: white;
+				--secondary-color-theme: rgb(231, 231, 231);
+				--text-color-theme: black;
+			}
+			body {
+				font-family: 'Open Sans', sans-serif;
+				font-size: 16px;
+				color: var(--text-color-theme);
+				background: var(--primary-color-theme);
+			}
+			a {
+				color: inherit;
+			}
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--primary-color-theme: rgb(37, 37, 37);
+					--secondary-color-theme: rgb(62, 62, 62);
+					--text-color-theme: white;
+				}
+				.logo {
+					filter: invert(1);
+				}
+			}
+		</style>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
