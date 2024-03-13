@@ -3,5 +3,5 @@
 set -Eeuo pipefail
 
 echo "Clearing database..."
-npx wrangler d1 execute michigan-daily-alt-text-tracker --local --command="DROP TABLE date_entries"
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --command="DROP TABLE articles"
 echo "Successfully dropped table ✅"
