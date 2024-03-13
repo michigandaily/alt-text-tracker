@@ -90,9 +90,6 @@
 	</section>
 	<StackedBarChart {width} {height} {index} />
 	<LineGraph {width} {height} {index} />
-	<section>
-		<h3>Insights</h3>
-	</section>
 </main>
 
 <style>
