@@ -7,6 +7,9 @@
 
 	const padding = 32;
 	$: [earliest, latest] = d3.extent([...index].map(([d]) => new Date(d))) as Iterable<Date>;
+	$: numBars = Math.floor(
+		(latest.getTime() + 1000 * 3600 * 24 - earliest.getTime()) / (1000 * 3600 * 24)
+	);
 
 	$: x = d3.scaleUtc(
 		[earliest, new Date(latest.getTime() + 1000 * 3600 * 24)] as Iterable<Number>,
@@ -17,7 +20,8 @@
 	$: averages = [...index].map(([d], i) => [
 		d,
 		(d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published_with_alt_text)) /
-		d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published))) * 100
+			d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published))) *
+			100
 	]);
 
 	let gx: SVGGElement;
@@ -31,22 +35,28 @@
 		.y(([d, v]) => y(v));
 
 	function handleMouseOver(d: MouseEvent, data: { date: string; value: number }) {
-		d3.select('.tooltip')
-			.style('display', 'block')
-			.style('left', d.pageX + 'px')
-			.style('top', d.pageY + 'px')
-			.text(
-				`On ${data.date}, the running average percent of images published with alt text is ${data.value.toFixed(2)}%`
-			);
+		if (
+			Math.abs(new Date(data.date).getTime() - earliest.getTime()) >
+			Math.abs(new Date(data.date).getTime() - latest.getTime())
+		) {
+			d3.select('#label')
+				.attr('x', x(new Date(data.date)) - 400)
+				.attr('y', y(data.value))
+				.text(`On ${data.date}, the averge % of images with alt text is ${data.value.toFixed(2)}%`);
+		} else {
+			d3.select('#label')
+				.attr('x', x(new Date(data.date)))
+				.attr('y', y(data.value))
+				.text(`On ${data.date}, the averge % of images with alt text is ${data.value.toFixed(2)}%`);
+		}
 	}
 
 	function handleMouseOut() {
-		d3.select('.tooltip').style('display', 'none');
+		d3.select('#label').text('');
 	}
 </script>
 
 <figure>
-	<div id="tooltip"></div>
 	<svg {width} {height} aria-labelledby="chart-title chart-desc">
 		<title id="chart-title"></title>
 		<desc id="chart-desc">
@@ -57,17 +67,17 @@
 		<g bind:this={gy} transform="translate({padding}, {0})" />
 		<path fill="none" stroke="steelblue" stroke-width="1.5" d={line(averages)} />
 		{#each averages as [date, average]}
-			<circle
+			<rect
 				role="none"
 				on:mouseenter={(d) => handleMouseOver(d, { date, value: average })}
 				on:mouseleave={handleMouseOut}
-				cx={x(new Date(date))}
-				cy={y(average)}
-				r="5"
+				x={x(new Date(date))}
+				{height}
+				width={(width - padding) / numBars}
 				fill="transparent"
 			/>
-            
 		{/each}
+		<text id="label"></text>
 	</svg>
 </figure>
 
@@ -78,5 +88,12 @@
 		border: 1px solid var(--text-color-theme);
 		border-radius: 1rem;
 		background: var(--secondary-color-theme);
+	}
+
+	text {
+		fill: white;
+		font-size: 14px;
+		width: 2rem;
+		pointer-events: none;
 	}
 </style>
