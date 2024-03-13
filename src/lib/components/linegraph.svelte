@@ -64,8 +64,6 @@
 				cx={x(new Date(date))}
 				cy={y(average)}
 				r="5"
-                stroke-width="1"
-                stroke="steelblue"
 				fill="transparent"
 			/>
             
