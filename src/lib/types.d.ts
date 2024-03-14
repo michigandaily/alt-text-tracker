@@ -1,10 +1,18 @@
-export interface DateEntry {
+import type { InternSet } from "d3";
+
+export interface ArticleEntry {
 	date: string;
 	images_published: number;
 	images_published_with_alt_text: number;
-	category_data: string;
-	article_ids: Array<number>;
+	categories: string;
+}
+
+export interface GraphData {
 	articles_published: number;
+	articles_published_with_alt_text: number;
+	images_published: number;
+	images_published_with_alt_text: number;
+	categories: InternSet<string>;
 }
 
 export interface Article {

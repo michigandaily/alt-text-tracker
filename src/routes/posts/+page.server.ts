@@ -5,17 +5,16 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const page = parseInt(url.searchParams.get('page') ?? '0');
 
 	const response = await platform?.env.DB.prepare(
-		`SELECT article_ids FROM date_entries 
-		WHERE LENGTH(article_ids) > 0
-		ORDER BY date DESC LIMIT ${page * 5}, 5`
+		`SELECT aid FROM articles
+		WHERE images_published_with_alt_text != images_published
+		ORDER BY date DESC LIMIT ${page * 18}, 18`
 	).all();
 
 	const ids =
 		response?.results
-			.map((resp: Array<{ article_ids: string }> | unknown) =>
-				(resp as { article_ids: string }).article_ids.split(',')
-			)
-			.flat() ?? [];
+			.map((resp: Array<{ aid: number }> | unknown) =>
+				(resp as { aid: number }).aid
+			) ?? [];
 
 	const articles: Array<Article> =
 		ids.length > 0

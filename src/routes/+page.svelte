@@ -1,11 +1,13 @@
 <script lang="ts">
 	import * as d3 from 'd3';
-	import type { DateEntry } from '$lib/types';
+	import StackedBarChart from '$lib/components/stackedbarchart.svelte';
+	import LineGraph from '$lib/components/linegraph.svelte';
 
 	export let data;
 	let entries = data?.entries;
 
 	$: timerange = all;
+	$: category = null;
 
 	const lastWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
 	const lastMonth = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000);
@@ -13,87 +15,29 @@
 	const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
 	const all = new Date('2022-12-31');
 
-	$: category = null;
-
-	const gap = 0;
-	const padding = 32;
 	$: innerWidth = 1300;
 	$: innerHeight = 600;
-	$: width = innerWidth / 1.05;
+	$: width = innerWidth / 1.075;
 	$: height = innerHeight / 1.75;
 
-	let tidy = entries
-		.map((d: DateEntry) => [
-			{
-				date: d.date,
-				status: 'Images published with alternative text',
-				value: d.images_published_with_alt_text
-			},
-			{
-				date: d.date,
-				status: 'Images published',
-				value: d.images_published
-			}
-		])
-		.flat();
-
-	$: tidy = entries
-		.map((d: DateEntry) => [
-			{
-				date: d.date,
-				status: 'Images published with alternative text',
-				value: category
-					? JSON.parse(d.category_data)[category]?.images_published_with_alt_text ?? 0
-					: d.images_published_with_alt_text
-			},
-			{
-				date: d.date,
-				status: 'Images published',
-				value: category
-					? JSON.parse(d.category_data)[category]?.images_published ?? 0
-					: d.images_published
-			}
-		])
-		.flat()
-		.filter((entry) => entry.date > timerange.toISOString().split('T')[0]);
+	$: tidy = entries.filter(
+		(entry) =>
+			new Date(entry.date) >= timerange && (category ? entry.categories.includes(category) : true)
+	);
 
 	$: index = d3.rollup(
 		tidy,
-		(v) => Object.fromEntries(v.map((o) => [o.status, o.value])),
+		(v) => ({
+			articles_published: v.length,
+			articles_published_with_alt_text: v.filter(
+				(a) => a.images_published === a.images_published_with_alt_text
+			).length,
+			images_published: d3.sum(v.map((a) => a.images_published)),
+			images_published_with_alt_text: d3.sum(v.map((a) => a.images_published_with_alt_text)),
+			categories: d3.union(v.map((a) => a.categories.split(',')).flat())
+		}),
 		(d) => d.date
 	);
-
-	$: x = d3.scaleUtc(d3.extent(tidy.map((d) => new Date(d.date))) as Iterable<Number>, [
-		padding,
-		width - padding
-	]);
-	$: y = d3.scaleLinear(d3.extent(tidy.map((d) => d.value)) as Iterable<Number>, [
-		height - padding,
-		padding
-	]);
-
-	let gx: SVGGElement;
-	let gy: SVGGElement;
-	$: d3.select(gx).call(d3.axisBottom(x));
-	$: d3.select(gy).call(d3.axisLeft(y));
-
-	function handleMouseOver(d: MouseEvent, data: { date: string; values: Record<string, number> }) {
-		d3.select('.tooltip')
-			.style('display', 'block')
-			.style('left', d.pageX + 'px')
-			.style('top', d.pageY + 'px')
-			.text(
-				`On ${data.date}, ${data.values['Images published with alternative text']} out of ${data.values['Images published']} images had alt text (${((data.values['Images published with alternative text'] / data.values['Images published']) * 100).toFixed(2)}%)`
-			);
-
-		d3.selectAll('.stacked-bar').style('opacity', '0.25');
-		d.target!.style.opacity = 1;
-	}
-
-	function handleMouseOut() {
-		d3.select('.tooltip').style('display', 'none');
-		d3.selectAll('.stacked-bar').style('opacity', 1);
-	}
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -144,63 +88,13 @@
 			</div>
 		</div>
 	</section>
-	<figure>
-		<div class="tooltip"></div>
-		<svg {width} {height} role="img" aria-labelledby="chart-title chart-desc">
-			<title id="chart-title"></title>
-			<!-- TODO: more descriptive -->
-			<desc id="chart-desc">
-				Amount of images published with alternative text every day over a period of time
-			</desc>
-			<g bind:this={gx} transform="translate({0}, {height - padding})" />
-			<g bind:this={gy} transform="translate({padding}, {0})" />
-			<g>
-				{#each index as [date, values]}
-					<g
-						class="stacked-bar"
-						role="none"
-						style="margin: 0; padding; 0; gap: 0;"
-						on:mouseenter={(d) => handleMouseOver(d, { date, values })}
-						on:mouseleave={handleMouseOut}
-					>
-						<rect
-							fill="lightcoral"
-							x={x(new Date(date))}
-							width={(width - padding) / (tidy.length / 2) - gap}
-							y={y(values['Images published'])}
-							height={height - padding - y(values['Images published'])}
-						/>
-						<rect
-							fill="lightgreen"
-							x={x(new Date(date))}
-							width={(width - padding) / (tidy.length / 2) - gap}
-							y={y(values['Images published with alternative text'])}
-							height={height - padding - y(values['Images published with alternative text'])}
-						/>
-					</g>
-				{/each}
-			</g>
-		</svg>
-	</figure>
+	<StackedBarChart {width} {height} {index} />
+	<LineGraph {width} {height} {index} />
 </main>
 
 <style>
 	h2 {
 		font-size: 1.25rem;
-	}
-
-	figure {
-		margin: 0;
-	}
-
-	.tooltip {
-		position: absolute;
-		display: none;
-		padding: 5px;
-		background-color: white;
-		color: black;
-		border: 1px solid black;
-		pointer-events: none;
 	}
 
 	.options {
