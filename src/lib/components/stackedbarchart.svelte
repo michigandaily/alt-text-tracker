@@ -36,7 +36,7 @@
 			);
 
 		d3.selectAll('.stacked-bar').style('opacity', '0.25');
-		d.target!.style.opacity = 1;
+		(d.target as SVGRectElement).style.opacity = '1';
 	}
 
 	function handleMouseOut() {
@@ -87,7 +87,6 @@
 <style>
 	figure {
 		margin: 0;
-        margin-top: 1rem;
         border: 1px solid var(--text-color-theme);
         border-radius: 1rem;
         background: var(--secondary-color-theme);

@@ -47,20 +47,10 @@
 		<h2>Tracking The Daily's alternative text</h2>
 		<p>
 			The Daily has been tracking the number of images published with and without alternative text
-			since December 2022. The chart below shows the number of images published with and without
-			alternative text each day.
+			since December 2022. The charts below respectively shows the number of images published with and without
+			alternative text each day, and the running average percent of images published with alternative text. 
 		</p>
 		<div class="options">
-			<div class="legend">
-				<div class="legend-item">
-					<div style="background-color: lightgreen"></div>
-					<span>Images published with alternative text</span>
-				</div>
-				<div class="legend-item">
-					<div style="background-color: LightCoral"></div>
-					<span>Images published without alternative text</span>
-				</div>
-			</div>
 			<div>
 				<label for="timerange">Select timerange:</label>
 				<select bind:value={timerange}>
@@ -88,8 +78,28 @@
 			</div>
 		</div>
 	</section>
-	<StackedBarChart {width} {height} {index} />
-	<LineGraph {width} {height} {index} />
+	<section>
+		<div class="legend">
+			<div class="legend-item">
+				<div style="background-color: lightgreen"></div>
+				<span>Images published with alternative text</span>
+			</div>
+			<div class="legend-item">
+				<div style="background-color: LightCoral"></div>
+				<span>Images published without alternative text</span>
+			</div>
+		</div>
+		<StackedBarChart {width} {height} {index} />
+	</section>
+	<section>
+		<div class="legend">
+			<div class="legend-item">
+				<div style="background-color: steelblue;"></div>
+				<span>Running average percentage of images published with alternative text</span>
+			</div>
+		</div>
+		<LineGraph {width} {height} {index} />
+	</section>
 </main>
 
 <style>
@@ -104,11 +114,8 @@
 		gap: 10px;
 	}
 
-	.legend-item {
-		display: flex;
-		align-items: center;
-		gap: 0.25rem;
-		font-size: 0.85rem;
+	.legend {
+		padding: 8px;
 	}
 
 	.legend-item div {
@@ -129,6 +136,8 @@
 	}
 
 	main {
+		display: grid;
+		gap: 1rem;
 		padding: 2rem;
 	}
 </style>

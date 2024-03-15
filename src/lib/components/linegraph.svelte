@@ -22,7 +22,7 @@
 		(d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published_with_alt_text)) /
 			d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published))) *
 			100
-	]);
+	]) as [string, number][];
 
 	let gx: SVGGElement;
 	let gy: SVGGElement;
@@ -84,7 +84,6 @@
 <style>
 	figure {
 		margin: 0;
-		margin-top: 1rem;
 		border: 1px solid var(--text-color-theme);
 		border-radius: 1rem;
 		background: var(--secondary-color-theme);
