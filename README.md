@@ -1,6 +1,8 @@
-# Alt text tracker
+# Alt Text Tracker
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+A dashboard for visualizing The Michigan Daily's alternative text on images published since January 2023. At the beginning of every day, a Cloudflare Worker runs and collects data on the previous day's images, both with and without alt text. 
+
+The primary purpose of this project is intended to be used as an accessibility auditor for the editorial staff of The Michigan Daily. 
 
 ## Developing
 
@@ -26,5 +28,3 @@ pnpm run build
 ```
 
 You can preview the production build with `pnpm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
