@@ -16,7 +16,7 @@
 	>
 		<div>
 			<label for="category">Select category:</label>
-			<select id="category" bind:value={category} on:selectionchange>
+			<select id="category" bind:value={category}>
 				<option value={null}>All</option>
 				<option value={46}>News</option>
 				<option value={44}>Sports</option>
