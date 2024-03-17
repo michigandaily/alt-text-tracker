@@ -4,9 +4,9 @@
 
 	export let data;
 
-	$: category = data.category ?? null;
-	$: start = data.start ?? null;
-	$: end = data.end ?? null;
+	let category = data.category ?? null;
+	let start = data.start ?? null;
+	let end = data.end ?? null;
 </script>
 
 <section style="max-width: 1200px; margin: 0 auto; ">

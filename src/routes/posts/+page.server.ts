@@ -9,13 +9,13 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const start = url.searchParams.get('start') ?? '2022-12-31';
 	const end = url.searchParams.get('end') ?? new Date().toISOString().split('T')[0];
 
-	const response = await platform?.env.DB.prepare(
-		`SELECT aid FROM articles
-		WHERE images_published_with_alt_text != images_published 
-		${category ? `AND categories LIKE "%${category}%"` : ''}
-		AND date >= "${start}" AND date <= "${end}"
-		ORDER BY date DESC LIMIT ${page * 18}, 18`
-	).all();
+	const query = `SELECT aid FROM articles
+	WHERE images_published_with_alt_text != images_published
+	AND (?1 IS NULL OR ?1 IN (SELECT value FROM json_each(categories)))
+	AND date >= ?2 AND date <= ?3
+	ORDER BY date DESC LIMIT ?4 * 18, 18`;
+
+	const response = await platform?.env.DB.prepare(query).bind(category, start, end, page).all();
 
 	const ids =
 		response?.results.map(

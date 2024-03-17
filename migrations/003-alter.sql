@@ -1,0 +1,1 @@
+UPDATE articles SET categories = "[" || categories || "]";

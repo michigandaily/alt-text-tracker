@@ -142,7 +142,7 @@ export default {
 					entry.date,
 					entry.images_published,
 					entry.images_published_with_alt_text,
-					entry.categories.toString(),
+					JSON.stringify(entry.categories),
 				)
 			);
 		});
