@@ -38,8 +38,6 @@
 		}),
 		(d) => d.date
 	);
-
-	$: console.log(index);
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
