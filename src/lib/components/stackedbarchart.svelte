@@ -59,6 +59,8 @@
 		<g>
 			{#each index as [date, values]}
 				<a
+					data-sveltekit-preload-data="false"
+					data-sveltekit-preload-code="false"
 					href={`posts?${category ? `category=${category}` : ''}				
 				${date ? `&start=${date}` : ''}
 				${date ? `&end=${date}` : ''}`}

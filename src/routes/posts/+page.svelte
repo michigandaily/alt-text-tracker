@@ -10,7 +10,7 @@
 </script>
 
 <section style="max-width: 1200px; margin: 0 auto; ">
-	<h3>Recent Articles without Alt Text</h3>
+	<h1>Recent Articles without Alt Text</h1>
 	<div
 		style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 3rem;"
 	>
@@ -83,6 +83,11 @@
 				<ImagePages images={parseContent(article.image, article.content)} />
 				<p>{article.date.split('T')[0]}</p>
 			</li>
+		{:else}
+			<div style="text-align: center">
+				<h2>No More Articles</h2>
+				<p>You've reached the end of the list!</p>
+			</div>
 		{/each}
 	</ul>
 </section>
@@ -118,7 +123,7 @@
 		border: 0.5px solid var(--text-color-theme);
 		background: var(--secondary-color-theme);
 	}
-	
+
 	#apply {
 		box-sizing: border-box;
 		padding: 0.75rem;
