@@ -4,8 +4,9 @@
 	export let width: number;
 	export let height: number;
 	export let index: d3.InternMap<string, GraphData>;
+	export let category: number | null;
 
-    const padding = 32;
+	const padding = 32;
 	$: [earliest, latest] = d3.extent([...index].map(([d]) => new Date(d))) as Iterable<Date>;
 	$: numBars = Math.floor(
 		(latest.getTime() + 1000 * 3600 * 24 - earliest.getTime()) / (1000 * 3600 * 24)
@@ -57,28 +58,36 @@
 		<g bind:this={gy} transform="translate({padding}, {0})" />
 		<g>
 			{#each index as [date, values]}
-				<g
-					class="stacked-bar"
-					role="none"
-					style="margin: 0; padding; 0; gap: 0;"
-					on:mouseenter={(d) => handleMouseOver(d, { date, values })}
-					on:mouseleave={handleMouseOut}
+				<a
+					data-sveltekit-preload-data="false"
+					data-sveltekit-preload-code="false"
+					href={`posts?${category ? `category=${category}` : ''}				
+				${date ? `&start=${date}` : ''}
+				${date ? `&end=${date}` : ''}`}
 				>
-					<rect
-						fill="lightcoral"
-						x={x(new Date(date))}
-						width={Math.max((width - padding) / numBars, 1)}
-						y={y(values.images_published)}
-						height={height - padding - y(values.images_published)}
-					/>
-					<rect
-						fill="lightgreen"
-						x={x(new Date(date))}
-						width={Math.max((width - padding) / numBars, 1)}
-						y={y(values.images_published_with_alt_text)}
-						height={Math.max(height - padding - y(values.images_published_with_alt_text), 0)}
-					/>
-				</g>
+					<g
+						class="stacked-bar"
+						role="none"
+						style="margin: 0; padding; 0; gap: 0;"
+						on:mouseenter={(d) => handleMouseOver(d, { date, values })}
+						on:mouseleave={handleMouseOut}
+					>
+						<rect
+							fill="lightcoral"
+							x={x(new Date(date))}
+							width={Math.max((width - padding) / numBars, 1)}
+							y={y(values.images_published)}
+							height={height - padding - y(values.images_published)}
+						/>
+						<rect
+							fill="lightgreen"
+							x={x(new Date(date))}
+							width={Math.max((width - padding) / numBars, 1)}
+							y={y(values.images_published_with_alt_text)}
+							height={Math.max(height - padding - y(values.images_published_with_alt_text), 0)}
+						/>
+					</g>
+				</a>
 			{/each}
 		</g>
 	</svg>
@@ -87,9 +96,9 @@
 <style>
 	figure {
 		margin: 0;
-        border: 1px solid var(--text-color-theme);
-        border-radius: 1rem;
-        background: var(--secondary-color-theme);
+		border: 1px solid var(--text-color-theme);
+		border-radius: 1rem;
+		background: var(--secondary-color-theme);
 	}
 
 	.tooltip {
