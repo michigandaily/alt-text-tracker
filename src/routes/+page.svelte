@@ -47,13 +47,14 @@
 		<h2>Tracking The Daily's alternative text</h2>
 		<p>
 			The Daily has been tracking the number of images published with and without alternative text
-			since December 2022. The charts below respectively shows the number of images published with and without
-			alternative text each day, and the running average percent of images published with alternative text. 
+			since December 2022. The charts below respectively shows the number of images published with
+			and without alternative text each day, and the running average percent of images published
+			with alternative text.
 		</p>
 		<div class="options">
 			<div>
 				<label for="timerange">Select timerange:</label>
-				<select bind:value={timerange}>
+				<select id="timerange" bind:value={timerange}>
 					<option value={all}></option>
 					<option value={lastWeek}>Last week</option>
 					<option value={lastMonth}>Last month</option>
@@ -63,7 +64,7 @@
 			</div>
 			<div>
 				<label for="category">Select category:</label>
-				<select bind:value={category}>
+				<select id="category" bind:value={category}>
 					<option value={null}>All</option>
 					<option value={46}>News</option>
 					<option value={44}>Sports</option>
@@ -89,7 +90,7 @@
 				<span>Images published without alternative text</span>
 			</div>
 		</div>
-		<StackedBarChart {width} {height} {index} />
+		<StackedBarChart {width} {height} {index} {category} />
 	</section>
 	<section>
 		<div class="legend">
