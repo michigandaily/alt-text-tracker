@@ -34,10 +34,12 @@
 			).length,
 			images_published: d3.sum(v.map((a) => a.images_published)),
 			images_published_with_alt_text: d3.sum(v.map((a) => a.images_published_with_alt_text)),
-			categories: d3.union(v.map((a) => a.categories.split(',')).flat())
+			categories: d3.union(v.map((a) => JSON.parse(a.categories)).flat())
 		}),
 		(d) => d.date
 	);
+
+	$: console.log(index);
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
