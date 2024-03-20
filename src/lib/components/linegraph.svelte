@@ -6,7 +6,7 @@
 	export let index: d3.InternMap<string, GraphData>;
 
 	const padding = 32;
-	$: [earliest, latest] = d3.extent([...index].map(([d]) => new Date(d))) as Iterable<Date>;
+	$: [earliest, latest] = d3.extent([...index], ([d]) => new Date(d)) as Iterable<Date>;
 	$: numBars = Math.floor(
 		(latest.getTime() + 1000 * 3600 * 24 - earliest.getTime()) / (1000 * 3600 * 24)
 	);

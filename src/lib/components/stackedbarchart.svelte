@@ -7,7 +7,7 @@
 	export let category: number | null;
 
 	const padding = 32;
-	$: [earliest, latest] = d3.extent([...index].map(([d]) => new Date(d))) as Iterable<Date>;
+	$: [earliest, latest] = d3.extent([...index], ([d]) => new Date(d)) as Iterable<Date>;
 	$: numBars = Math.floor(
 		(latest.getTime() + 1000 * 3600 * 24 - earliest.getTime()) / (1000 * 3600 * 24)
 	);
@@ -17,7 +17,7 @@
 		[padding, width]
 	);
 	$: y = d3.scaleLinear(
-		[0, d3.max([...index].map(([d, v]) => v.images_published))] as Iterable<Number>,
+		[0, d3.max([...index], ([d, v]) => v.images_published)] as Iterable<Number>,
 		[height - padding, padding]
 	);
 
@@ -120,6 +120,7 @@
 	#tooltip {
 		display: block;
 		position: absolute;
+		opacity: 0;
 
 		background-color: white;
 		color: black;
