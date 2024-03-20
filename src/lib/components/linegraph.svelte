@@ -19,8 +19,8 @@
 
 	$: averages = [...index].map(([d], i) => [
 		d,
-		(d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published_with_alt_text)) /
-			d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published))) *
+		(d3.sum([...index].slice(0, i + 1), ([d, v]) => v.images_published_with_alt_text) /
+			d3.sum([...index].slice(0, i + 1), ([d, v]) => v.images_published)) *
 			100
 	]) as [string, number][];
 

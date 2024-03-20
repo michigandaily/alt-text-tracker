@@ -27,27 +27,43 @@
 	$: d3.select(gy).call(d3.axisLeft(y));
 
 	function handleMouseOver(d: MouseEvent, data: { date: string; values: GraphData }) {
-		d3.select('.tooltip')
-			.style('display', 'block')
-			.style('left', d.pageX + 'px')
-			.style('top', d.pageY + 'px')
+		const height = document.querySelector('#tooltip')?.clientHeight ?? 0;
+		if (
+			Math.abs(new Date(data.date).getTime() - earliest.getTime()) >
+			Math.abs(new Date(data.date).getTime() - latest.getTime())
+		) {
+			d3.select('#tooltip')
+			.style('opacity', '1')
+			.style('left', d.pageX - 165 + 'px')
+			.style('top', d.pageY - height  + 'px')
 			.text(
 				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
                 had alt text (${((data.values.images_published_with_alt_text / data.values.images_published) * 100).toFixed(2)}%)`
 			);
+		}
+		else {
+			d3.select('#tooltip')
+			.style('opacity', '1')
+			.style('left', d.pageX + 'px')
+			.style('top', d.pageY - height - 5 + 'px')
+			.text(
+				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
+                had alt text (${((data.values.images_published_with_alt_text / data.values.images_published) * 100).toFixed(2)}%)`
+			);
+		}	
 
 		d3.selectAll('.stacked-bar').style('opacity', '0.25');
 		(d.target as SVGRectElement).style.opacity = '1';
 	}
 
 	function handleMouseOut() {
-		d3.select('.tooltip').style('display', 'none');
+		d3.select('#tooltip').style('opacity', '0');
 		d3.selectAll('.stacked-bar').style('opacity', 1);
 	}
 </script>
 
 <figure>
-	<div class="tooltip"></div>
+	<div id="tooltip"></div>
 	<svg {width} {height} role="img" aria-labelledby="chart-title chart-desc">
 		<title id="chart-title"></title>
 		<!-- TODO: more descriptive -->
@@ -101,13 +117,17 @@
 		background: var(--secondary-color-theme);
 	}
 
-	.tooltip {
+	#tooltip {
+		display: block;
 		position: absolute;
-		display: none;
-		padding: 5px;
+
 		background-color: white;
 		color: black;
+
+		max-width: 10rem;
+		padding: 5px;
 		border: 1px solid black;
+
 		pointer-events: none;
 	}
 </style>
