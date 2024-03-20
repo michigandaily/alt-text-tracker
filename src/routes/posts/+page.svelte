@@ -71,7 +71,7 @@
 		{/if}
 	</nav>
 	<ul>
-		{#each data.articles as article}
+		{#each data.articles as article (article.id)}
 			<li>
 				<a href={article.permalink}>
 					<p>

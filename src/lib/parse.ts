@@ -49,7 +49,7 @@ export function parseSources(image: Image) {
 	return image.sources
 		.map(
 			(source: { uri: string; width: number; height: number }) =>
-				`${source.uri} ${source.width}w , `
+				`${source.uri} ${source.width}w `
 		)
-		.toString();
+		.join(",");
 }

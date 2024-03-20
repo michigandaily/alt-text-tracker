@@ -6,7 +6,7 @@
 	export let index: d3.InternMap<string, GraphData>;
 
 	const padding = 32;
-	$: [earliest, latest] = d3.extent([...index].map(([d]) => new Date(d))) as Iterable<Date>;
+	$: [earliest, latest] = d3.extent([...index], ([d]) => new Date(d)) as Iterable<Date>;
 	$: numBars = Math.floor(
 		(latest.getTime() + 1000 * 3600 * 24 - earliest.getTime()) / (1000 * 3600 * 24)
 	);
@@ -19,8 +19,8 @@
 
 	$: averages = [...index].map(([d], i) => [
 		d,
-		(d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published_with_alt_text)) /
-			d3.sum([...index].slice(0, i + 1).map(([d, v]) => v.images_published))) *
+		(d3.sum([...index].slice(0, i + 1), ([d, v]) => v.images_published_with_alt_text) /
+			d3.sum([...index].slice(0, i + 1), ([d, v]) => v.images_published)) *
 			100
 	]) as [string, number][];
 

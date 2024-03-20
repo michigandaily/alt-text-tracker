@@ -32,8 +32,8 @@
 			articles_published_with_alt_text: v.filter(
 				(a) => a.images_published === a.images_published_with_alt_text
 			).length,
-			images_published: d3.sum(v.map((a) => a.images_published)),
-			images_published_with_alt_text: d3.sum(v.map((a) => a.images_published_with_alt_text)),
+			images_published: d3.sum(v, a => a.images_published),
+			images_published_with_alt_text: d3.sum(v, a => a.images_published_with_alt_text),
 			categories: d3.union(v.map((a) => JSON.parse(a.categories)).flat())
 		}),
 		(d) => d.date
