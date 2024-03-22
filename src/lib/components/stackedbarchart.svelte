@@ -34,7 +34,7 @@
 		) {
 			d3.select('#tooltip')
 			.style('opacity', '1')
-			.style('left', d.pageX - 165 + 'px')
+			.style('left', d.pageX - 175 + 'px')
 			.style('top', d.pageY - height  + 'px')
 			.text(
 				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
@@ -44,7 +44,7 @@
 		else {
 			d3.select('#tooltip')
 			.style('opacity', '1')
-			.style('left', d.pageX + 'px')
+			.style('left', d.pageX + 5 + 'px')
 			.style('top', d.pageY - height - 5 + 'px')
 			.text(
 				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
