@@ -127,7 +127,7 @@ export default {
 
 		// Batch insert/update all date entries
 		const stmt = env.DB.prepare(
-			`INSERT OR REPLACE INTO articles
+			`INSERT OR IGNORE INTO articles
 			(aid, date, images_published, images_published_with_alt_text, categories) VALUES
 			(?, ?, ?, ?, ?)`
 		);
