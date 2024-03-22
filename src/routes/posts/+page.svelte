@@ -84,7 +84,7 @@
 				<p>{article.date.split('T')[0]}</p>
 			</li>
 		{:else}
-			<div style="text-align: center">
+			<div style="text-align: center; grid-column: span 3;">
 				<h2>No More Articles</h2>
 				<p>You've reached the end of the list!</p>
 			</div>
@@ -138,7 +138,7 @@
 	ul {
 		list-style: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
 
 		place-items: center;
 
