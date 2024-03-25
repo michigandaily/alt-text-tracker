@@ -6,7 +6,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 
 export const PUT: RequestHandler = async ({ request, platform }) => {
 	const { id }: { id: number } = await request.json();
-    console.log(`https://michigandaily.com/wp-json/tmd/v1/posts/?ids=${id}&content=true&image=true`)
+    
 	const images_without_alt_text: number = await fetch(
 		`https://michigandaily.com/wp-json/tmd/v1/posts/?ids=${id}&content=true&image=true`
 	)
