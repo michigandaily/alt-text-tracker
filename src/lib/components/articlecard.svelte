@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import { parseContent, parseSources } from '$lib/parse';
 	import type { Article } from '$lib/types';
 
 	export let article: Article;
+	export let path: string;
+
 	let images = parseContent(article.image, article.content);
 
 	let index = 0;
@@ -41,7 +42,7 @@
 {#if images.length == 0}
 	<form method="POST" action="?/update" use:enhance>
 		<input name="id" type="hidden" value={article.id} />
-		<input name="path" type="hidden" value={$page.url.pathname} />
+		<input name="path" type="hidden" value={path} />
 		<button class="clear">clear</button>
 	</form>
 {/if}

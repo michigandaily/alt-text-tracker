@@ -72,7 +72,13 @@
 	<ul>
 		{#each data.articles as article (article.id)}
 			<li>
-				<ArticleCard { article } />
+				<ArticleCard
+					{article}
+					path={`/posts/?page=${data.page}
+					${category ? `&category=${data.category}` : ''}
+					${start ? `&start=${data.start}` : ''}
+					${end ? `&end=${data.end}` : ''}`}
+				/>
 			</li>
 		{:else}
 			<div style="text-align: center; grid-column: span 3;">

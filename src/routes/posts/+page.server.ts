@@ -89,11 +89,11 @@ export const actions: Actions = {
 			.run();
 
 		if (response.error) {
-			fail(400, { message: response.error });
+			return fail(400, { message: response.error });
 		}
 
 		if (response.meta.rows_written < 1) {
-			fail(400, { message: "Failed to update article"})
+			return fail(400, { message: "Failed to update article"})
 		}
 		
 		redirect(304, String(data.get('path')));
