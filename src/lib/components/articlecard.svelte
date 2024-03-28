@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import { parseContent, parseSources } from '$lib/parse';
 	import type { Article } from '$lib/types';
 
@@ -18,11 +20,15 @@
 </a>
 <div style="display: flex; flex-flow: column nowrap; align-items: center; gap: 10px;">
 	<img srcset={parseSources(image)} loading="lazy" alt="" />
-	<div>
-		<button class="arrow" on:click={() => index--} disabled={index === 0}>←</button>
-		<button class="arrow" on:click={() => index++} disabled={index === images.length - 1}>→</button>
-	</div>
-	{index + 1}/{images.length}
+	{#if images.length > 1}
+		<div>
+			<button class="arrow" on:click={() => index--} disabled={index === 0}>←</button>
+			<button class="arrow" on:click={() => index++} disabled={index === images.length - 1}>
+				→
+			</button>
+		</div>
+		{index + 1}/{images.length}
+	{/if}
 	{#if images.length > 0}
 		<p style="color: lightcoral; margin: 0;">
 			{images.length} image{images.length > 1 ? 's' : ''} without alt text
@@ -33,20 +39,11 @@
 </div>
 <p>{article.date.split('T')[0]}</p>
 {#if images.length == 0}
-	<button
-		class="clear"
-		on:click={() => {
-			fetch(`/api/update`, {
-				method: 'PUT',
-				body: JSON.stringify({ id: article.id }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-				.then(() => location.reload())
-				.catch((error) => alert(`Failed to clear article: ${error}`));
-		}}>clear</button
-	>
+	<form method="POST" action="?/update" use:enhance>
+		<input name="id" type="hidden" value={article.id} />
+		<input name="path" type="hidden" value={$page.url.pathname} />
+		<button class="clear">clear</button>
+	</form>
 {/if}
 
 <style>
