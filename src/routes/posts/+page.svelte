@@ -1,6 +1,5 @@
 <script lang="ts">
-	import ImagePages from '$lib/components/imagepages.svelte';
-	import { parseContent } from '$lib/parse';
+	import ArticleCard from '$lib/components/articlecard.svelte';
 
 	export let data;
 
@@ -73,15 +72,13 @@
 	<ul>
 		{#each data.articles as article (article.id)}
 			<li>
-				<a href={article.permalink}>
-					<p>
-						<b>
-							{@html article.title}
-						</b>
-					</p>
-				</a>
-				<ImagePages images={parseContent(article.image, article.content)} />
-				<p>{article.date.split('T')[0]}</p>
+				<ArticleCard
+					{article}
+					path={`/posts/?page=${data.page}
+					${category ? `&category=${data.category}` : ''}
+					${start ? `&start=${data.start}` : ''}
+					${end ? `&end=${data.end}` : ''}`}
+				/>
 			</li>
 		{:else}
 			<div style="text-align: center; grid-column: span 3;">
