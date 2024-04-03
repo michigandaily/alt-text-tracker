@@ -26,7 +26,7 @@ function parseBlock(block: Block, images: Array<Image>) {
 		block.data.forEach((image: Image) => {
 			addImageWithoutAltText(image, images);
 		});
-	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column') {
+	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column' || block.blockName == 'core/group') {
 		block.innerBlocks.forEach((block) => parseBlock(block, images));
 	}
 }
