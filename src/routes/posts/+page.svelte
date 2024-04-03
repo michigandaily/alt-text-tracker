@@ -60,7 +60,7 @@
 				${end ? `&end=${data.end}` : ''}`}>← Back</a
 			>
 		{/if}
-		{#if data.articles.length > 0}
+		{#if data.articles.length > 18}
 			<a
 				href={`/posts/?page=${data.page + 1}
 				${category ? `&category=${data.category}` : ''}
@@ -97,7 +97,7 @@
 			${end ? `&end=${data.end}` : ''}`}>← Back</a
 		>
 	{/if}
-	{#if data.articles.length > 0}
+	{#if data.articles.length > 18}
 		<a
 			href={`/posts/?page=${data.page + 1}
 			${category ? `&category=${data.category}` : ''}
