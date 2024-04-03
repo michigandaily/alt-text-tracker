@@ -52,7 +52,7 @@ function parseBlockData(
 		block.data.forEach((image: Image) => {
 			parseImageData(aid, image, image_data);
 		});
-	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column') {
+	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column' || block.blockName == 'core/group') {
 		block.innerBlocks.forEach((block) => parseBlockData(aid, block, image_data));
 	}
 }
