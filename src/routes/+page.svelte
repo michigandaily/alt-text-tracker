@@ -1,19 +1,17 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import * as d3 from 'd3';
 	import StackedBarChart from '$lib/components/stackedbarchart.svelte';
 	import LineGraph from '$lib/components/linegraph.svelte';
 
+	import { lastWeek, lastMonth, lastSixMonths, lastYear, all } from '$lib/time.js';
+
 	export let data;
-	let entries = data?.entries;
+	$: entries = data?.entries;
 
-	$: timerange = all;
+	let timerange = data.after ? new Date(data.after) : lastMonth;
 	$: category = null;
-
-	const lastWeek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
-	const lastMonth = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000);
-	const lastSixMonths = new Date(new Date().getTime() - 7 * 4 * 24 * 60 * 60 * 1000 * 6);
-	const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
-	const all = new Date('2022-12-31');
 
 	$: innerWidth = 1300;
 	$: innerHeight = 600;
@@ -32,12 +30,14 @@
 			articles_published_with_alt_text: v.filter(
 				(a) => a.images_published === a.images_published_with_alt_text
 			).length,
-			images_published: d3.sum(v, a => a.images_published),
-			images_published_with_alt_text: d3.sum(v, a => a.images_published_with_alt_text),
+			images_published: d3.sum(v, (a) => a.images_published),
+			images_published_with_alt_text: d3.sum(v, (a) => a.images_published_with_alt_text),
 			categories: d3.union(v.map((a) => JSON.parse(a.categories)).flat())
 		}),
 		(d) => d.date
 	);
+
+	$: [earliest, _] = d3.extent(entries, (d) => new Date(d.date)) as Iterable<Date>;
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -54,7 +54,16 @@
 		<div class="options">
 			<div>
 				<label for="timerange">Select timerange:</label>
-				<select id="timerange" bind:value={timerange}>
+				<select
+					id="timerange"
+					bind:value={timerange}
+					on:change={() => {
+						if (earliest.getTime() > timerange.getTime()) {
+							goto(`/?after=${timerange.toISOString().split('T')[0]}`, { invalidateAll: true });
+						}
+						goto(`/?after=${timerange.toISOString().split('T')[0]}`);
+					}}
+				>
 					<option value={all}></option>
 					<option value={lastWeek}>Last week</option>
 					<option value={lastMonth}>Last month</option>
