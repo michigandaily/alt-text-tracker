@@ -14,7 +14,7 @@
 
 import type { Article, Block, Image, ArticleEntry, PostsQuery, SlackBlock } from './types';
 
-function getAttachment(date: string, today: string, image_data: Record<string, ArticleEntry>) {
+function formatAttachment(date: string, today: string, image_data: Record<string, ArticleEntry>) {
 	const data_all = Object.values(image_data).filter((a) => a.date === date);
 	const data_without_alt_text = data_all.filter(
 		(a) => a.images_published !== a.images_published_with_alt_text
@@ -38,18 +38,20 @@ function getAttachment(date: string, today: string, image_data: Record<string, A
 	};
 
 	if (date === today) {
-		attachment.blocks.push({
-			type: 'context',
-			elements: [
-				{
-					type: 'mrkdwn',
-					text: `_Note: Incomplete data. Wait for tomorrow for a full report on today's alt text._`
-				}
-			]
-		},
-		{
-			type: 'divider'
-		});
+		attachment.blocks.push(
+			{
+				type: 'context',
+				elements: [
+					{
+						type: 'mrkdwn',
+						text: `_Note: Incomplete data. Wait for tomorrow for a full report on today's alt text._`
+					}
+				]
+			},
+			{
+				type: 'divider'
+			}
+		);
 	} else {
 		attachment.blocks.push({
 			type: 'divider'
@@ -201,8 +203,6 @@ export default {
 				.split('T');
 
 			const dates = [yesterday, today];
-			const attachments = dates.map((date) => getAttachment(date, today, image_data)).filter((field) => field);
-
 			const resp = await fetch(env.SLACK_WEBHOOK, {
 				method: 'POST',
 				body: JSON.stringify({
@@ -215,7 +215,9 @@ export default {
 							}
 						}
 					],
-					attachments
+					attachments: dates
+						.map((date) => formatAttachment(date, today, image_data))
+						.filter((field) => field)
 				}),
 				headers: { 'Content-Type': 'application/json' }
 			})
