@@ -2,6 +2,12 @@ name = "michigan-daily-alt-text-tracker"
 main = "worker/index.ts"
 compatibility_date = "2024-02-23"
 
+[vars]
+PRODUCTION = false
+
+[env.production.vars]
+PRODUCTION = true
+
 # Cron Triggers
 # Docs: https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
 # Configuration: https://developers.cloudflare.com/workers/wrangler/configuration/#triggers

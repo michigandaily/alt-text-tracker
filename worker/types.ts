@@ -29,6 +29,18 @@ export interface Image {
 	alt: string;
 }
 
+export interface SlackBlock {
+	type: string;
+	text?: {
+		type: string;
+		text: string;
+	}
+	elements?: [{
+		type: string;
+		text?: string;
+	}]
+}
+
 export interface ArticleEntry {
 	date: string;
 	images_published: number;
