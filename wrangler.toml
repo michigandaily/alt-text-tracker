@@ -12,7 +12,7 @@ PRODUCTION = true
 # Docs: https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
 # Configuration: https://developers.cloudflare.com/workers/wrangler/configuration/#triggers
 [triggers]
-crons = ["0 0 * * *"] # 0 0 * * * = run at the beginning of every day
+crons = ["0 16 * * *"] # 0 0 * * * = run in the middle of the day
 
 [[d1_databases]]
 binding = "DB" # available in your Worker on env.DB
