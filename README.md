@@ -23,7 +23,7 @@ pnpm run dev -- --open
 
 Every day, the worker runs via a cron trigger and collects data on the previous day's usage of alt text.
 
-To test the scheduled worker, run `pnpm run worker`. You can go to http://localhost:8787/__scheduled` to trigger the worker task.
+To test the scheduled worker, run `pnpm run worker`. You can go to <http://localhost:8787/__scheduled> to trigger the worker task.
 
 To test daily slack notifications on the `alt-text-tracker` channel, create a .dev.vars file in the root of the directory, and add SLACK_WEBHOOK=\<your-webhook-here\>.
 
