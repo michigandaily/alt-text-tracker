@@ -12,54 +12,8 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import type { Article, Block, Image, ArticleEntry, PostsQuery, SlackBlock } from './types';
-
-function formatAttachment(date: string, today: string, image_data: Record<string, ArticleEntry>) {
-	const data_all = Object.values(image_data).filter((a) => a.date === date);
-	const data_without_alt_text = data_all.filter(
-		(a) => a.images_published !== a.images_published_with_alt_text
-	);
-
-	if (data_all.length === 0) {
-		return false;
-	}
-
-	const attachment: { color: string; blocks: Array<SlackBlock> } = {
-		color: data_without_alt_text.length === 0 ? '#90EE90' : '#FF6347',
-		blocks: [
-			{
-				type: 'section',
-				text: {
-					type: 'mrkdwn',
-					text: `*On <https://michigan-daily-alt-text-tracker.pages.dev/posts/?start=${date}&end=${date}|${new Date(date).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}>*\n📝 *${data_all.length}* articles were published. Of those, *${data_without_alt_text.length}* articles are in need of alternative text.\n🖼️ *${data_all.reduce((sum, a) => sum + a.images_published, 0)}* images were published. Of those, *${data_without_alt_text.reduce((sum, a) => sum + a.images_published, 0)}* images are in need of alternative text.`
-				}
-			}
-		]
-	};
-
-	if (date === today) {
-		attachment.blocks.push(
-			{
-				type: 'context',
-				elements: [
-					{
-						type: 'mrkdwn',
-						text: `_Note: Incomplete data. Wait for tomorrow for a full report on today's alt text._`
-					}
-				]
-			},
-			{
-				type: 'divider'
-			}
-		);
-	} else {
-		attachment.blocks.push({
-			type: 'divider'
-		});
-	}
-
-	return attachment;
-}
+import { sendReport } from './messaging';
+import type { Article, Block, Image, ArticleEntry, PostsQuery } from './types';
 
 function parseImageData(aid: number, image: Image, image_data: Record<string, ArticleEntry>) {
 	image_data[aid].images_published += 1;
@@ -197,35 +151,11 @@ export default {
 		const info = await env.DB.batch(batchUpdate);
 
 		if (env.PRODUCTION) {
-			const [today] = new Date().toISOString().split('T');
 			const [yesterday] = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 				.toISOString()
 				.split('T');
 
-			const dates = [yesterday, today];
-			const resp = await fetch(env.SLACK_WEBHOOK, {
-				method: 'POST',
-				body: JSON.stringify({
-					blocks: [
-						{
-							type: 'header',
-							text: {
-								type: 'plain_text',
-								text: `Daily Report - ${today}`
-							}
-						}
-					],
-					attachments: dates
-						.map((date) => formatAttachment(date, today, image_data))
-						.filter((field) => field)
-				}),
-				headers: { 'Content-Type': 'application/json' }
-			})
-				.then((resp) => resp.text())
-				.catch((error) => {
-					console.error(error);
-				});
-
+			const resp = await sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data });
 			console.log(resp);
 		}
 
