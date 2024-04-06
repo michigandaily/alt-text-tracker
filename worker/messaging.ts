@@ -55,6 +55,8 @@ function formatAttachment(date: string, data: Record<string, ArticleEntry>) {
 	const data_without_alt_text = data_all.filter(
 		(a) => a.images_published !== a.images_published_with_alt_text
 	);
+
+	const images_all = data_all.reduce((sum, a) => sum + a.images_published, 0);
 	const images_without_alt_text = data_without_alt_text.reduce(
 		(sum, a) => sum + a.images_published,
 		0
@@ -95,8 +97,8 @@ function formatAttachment(date: string, data: Record<string, ArticleEntry>) {
 					text: {
 						type: 'mrkdwn',
 						text:
-							`📝 *${data_all.length}* articles were published. Of those, *${data_without_alt_text.length}* articles are in need of alternative text.` +
-							`\n🖼️ *${data_all.reduce((sum, a) => sum + a.images_published, 0)}* images were published. Of those, *${images_without_alt_text}* images are in need of alternative text.`
+							`📝 *${data_all.length}* article${data_all.length !== 1 ? 's were' : ' was'} published. Of those, *${data_without_alt_text.length}* article${data_without_alt_text.length !== 1 ? 's are' : ' is'} in need of alternative text.` +
+							`\n🖼️ *${images_all}* image${images_all !== 1 ? 's were' : ' was'} published. Of those, *${images_without_alt_text}* image${images_without_alt_text !== 1 ? 's are' : ' is'} in need of alternative text.`
 					}
 				},
 				{
