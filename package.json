@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"worker": "npx wrangler dev --test-scheduled",
+		"worker": "npx wrangler dev --env local --test-scheduled",
 		"init": "./bin/init",
 		"update": "./bin/update",
 		"clear": "./bin/clear",
