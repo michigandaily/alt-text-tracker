@@ -12,27 +12,18 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import { sendReport } from './messaging';
 import type { Article, Block, Image, ArticleEntry, PostsQuery } from './types';
 
-function parseImageData(
-	aid: number,
-	image: Image,
-	image_data: Record<string, ArticleEntry>
-) {
+function parseImageData(aid: number, image: Image, image_data: Record<string, ArticleEntry>) {
 	image_data[aid].images_published += 1;
 
-	// If image contains alt text, add to images with alt text count, as well as the corresponding
-	// category specific counts
 	if (image && image.alt && image.alt.length > 0) {
 		image_data[aid].images_published_with_alt_text += 1;
-	} 
+	}
 }
 
-function parseBlockData(
-	aid: number,
-	block: Block,
-	image_data: Record<string, ArticleEntry>
-) {
+function parseBlockData(aid: number, block: Block, image_data: Record<string, ArticleEntry>) {
 	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
 		parseImageData(aid, block.data, image_data);
 	} else if (block.blockName == 'core/gallery') {
@@ -52,7 +43,11 @@ function parseBlockData(
 		block.data.forEach((image: Image) => {
 			parseImageData(aid, image, image_data);
 		});
-	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column' || block.blockName == 'core/group') {
+	} else if (
+		block.blockName == 'core/columns' ||
+		block.blockName == 'core/column' ||
+		block.blockName == 'core/group'
+	) {
 		block.innerBlocks.forEach((block) => parseBlockData(aid, block, image_data));
 	}
 }
@@ -64,8 +59,8 @@ function parseArticleData(post: Article, image_data: Record<string, ArticleEntry
 		date,
 		images_published: 0,
 		images_published_with_alt_text: 0,
-		categories: post.categories,
-	}
+		categories: post.categories
+	};
 
 	// Add featured image data
 	parseImageData(post.id, post.image, image_data);
@@ -76,7 +71,11 @@ function parseArticleData(post: Article, image_data: Record<string, ArticleEntry
 	});
 }
 
-async function parsePostQuery(page: number, after: string, image_data: Record<string, ArticleEntry>) {
+async function parsePostQuery(
+	page: number,
+	after: string,
+	image_data: Record<string, ArticleEntry>
+) {
 	let total_pages: number = 1;
 	await fetch(
 		`https://www.michigandaily.com/wp-json/tmd/v1/posts_query/?num_posts=200&page=${page}&after=${after}`
@@ -104,6 +103,8 @@ async function parsePostQuery(page: number, after: string, image_data: Record<st
 
 export interface Env {
 	DB: D1Database;
+	PRODUCTION: boolean;
+	SLACK_WEBHOOK: string;
 }
 
 export default {
@@ -120,7 +121,7 @@ export default {
 		const after: string = DB_resp ? DB_resp['MAX(date)'] ?? '2022-12-31' : '2022-12-31';
 
 		const total_pages = await parsePostQuery(0, after, image_data);
-		
+
 		for (let i = 1; i < total_pages; ++i) {
 			await parsePostQuery(i, after, image_data);
 		}
@@ -142,12 +143,22 @@ export default {
 					entry.date,
 					entry.images_published,
 					entry.images_published_with_alt_text,
-					JSON.stringify(entry.categories),
+					JSON.stringify(entry.categories)
 				)
 			);
 		});
 
 		const info = await env.DB.batch(batchUpdate);
+
+		if (env.PRODUCTION) {
+			const [yesterday] = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split('T');
+
+			const resp = await sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data });
+			console.log(resp);
+		}
+
 		console.log(info);
 	}
 };
