@@ -27,12 +27,6 @@ To test the scheduled worker, run `pnpm run worker`. You can go to <http://local
 
 To test daily slack notifications on the `alt-text-tracker` channel, create a .dev.vars file in the root of the directory, and add SLACK_WEBHOOK=\<your-webhook-here\>.
 
-## Building
+## Deployment
 
-To create a production version of your app:
-
-```bash
-pnpm run build
-```
-
-You can preview the production build with `pnpm run preview`.
+To deploy changes to the worker, run `npx wrangler deploy`. To change or add a new webhook or secret environment variable, run `npx wrangler secret put <KEY>`.
