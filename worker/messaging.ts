@@ -31,7 +31,7 @@ function formatBlock(date: string, data: Record<string, ArticleEntry>) {
 		(a) => a.images_published !== a.images_published_with_alt_text
 	);
 	const images_without_alt_text = data_without_alt_text.reduce(
-		(sum, a) => sum + a.images_published,
+		(sum, a) => sum + (a.images_published - a.images_published_with_alt_text),
 		0
 	);
 
@@ -58,7 +58,7 @@ function formatAttachment(date: string, data: Record<string, ArticleEntry>) {
 
 	const images_all = data_all.reduce((sum, a) => sum + a.images_published, 0);
 	const images_without_alt_text = data_without_alt_text.reduce(
-		(sum, a) => sum + a.images_published,
+		(sum, a) => sum + (a.images_published - a.images_published_with_alt_text),
 		0
 	);
 
