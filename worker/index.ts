@@ -93,8 +93,7 @@ export default {
 
 		const batchUpdate: Array<D1PreparedStatement> = [];
 
-		Object.keys(image_data).forEach((aid) => {
-			const entry: ArticleEntry = image_data[aid];
+		Object.entries(image_data).forEach(([aid, entry]) => {
 			batchUpdate.push(
 				stmt.bind(
 					aid,
