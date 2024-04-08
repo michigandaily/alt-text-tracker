@@ -20,7 +20,7 @@
 
 	$: tidy = entries.filter(
 		(entry) =>
-			new Date(entry.date) >= timerange && (category ? entry.categories.includes(category) : true)
+			new Date(entry.date) >= timerange && (category ? JSON.parse(entry.categories).includes(category) : true)
 	);
 
 	$: index = d3.rollup(
