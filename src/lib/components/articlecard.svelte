@@ -57,7 +57,19 @@
 		</p>
 	</div>
 {:else}
-	<p style="color: lightgreen; margin: 0; text-align: center;">All images have alt text</p>
+	<div style="font-weight: 700;">
+		<p
+			style="float: left; color: lightgreen; border-radius: 50%; border: 2px solid lightgreen; text-align: center; width: 1.3rem; margin-right: 1rem;"
+		>
+			✓
+		</p>
+		<p style="color: lightgreen; margin: 0;">All images have alt text</p>
+	</div>
+	<form method="POST" action="?/update" use:enhance>
+		<input name="id" type="hidden" value={article.id} />
+		<input name="path" type="hidden" value={path} />
+		<button class="clear">Click here to clear the article from the list</button>
+	</form>
 {/if}
 
 <div
@@ -72,13 +84,6 @@
 		<p>{index + 1}/{images.length}</p>
 	{/if}
 </div>
-{#if images.length == 0}
-	<form method="POST" action="?/update" use:enhance>
-		<input name="id" type="hidden" value={article.id} />
-		<input name="path" type="hidden" value={path} />
-		<button class="clear">clear</button>
-	</form>
-{/if}
 
 <style>
 	img {
@@ -124,11 +129,11 @@
 		right: 0%;
 	}
 	.clear {
-		color: white;
-		background: rgb(83, 158, 255);
-
+		color: lightgreen;
+		text-decoration: underline;
 		font-size: 16px;
-		padding: 5px;
-		border: 1px solid var(--text-color-theme);
+
+		background: none;
+		border: none;
 	}
 </style>
