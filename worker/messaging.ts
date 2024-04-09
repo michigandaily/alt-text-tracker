@@ -1,3 +1,4 @@
+import { formatISODate } from '$lib/time';
 import type { ArticleEntry } from './types';
 
 export async function sendReport(
@@ -81,15 +82,15 @@ function formatAttachment(date: string, data: Record<string, ArticleEntry>) {
 					type: 'section',
 					text: {
 						type: 'mrkdwn',
-						text: `*On <https://michigan-daily-alt-text-tracker.pages.dev/posts/?start=${date}&end=${date}|${new Date(
-							new Date(date).getTime() +
-							5 * 60 * 60 * 1000
-						).toLocaleDateString('en-us', {
-							weekday: 'long',
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric'
-						})}>*`
+						text: `*On <https://michigan-daily-alt-text-tracker.pages.dev/posts/?start=${date}&end=${date}|${formatISODate(
+							date,
+							{
+								weekday: 'long',
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric'
+							}
+						)}>*`
 					}
 				},
 				{
