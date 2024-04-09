@@ -12,63 +12,16 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import { parseArticle } from '$lib/parse';
 import { sendReport } from './messaging';
-import type { Article, Block, Image, ArticleEntry, PostsQuery } from './types';
+import type { Article, Image, ArticleEntry, PostsQuery } from './types';
 
-function parseImageData(aid: number, image: Image, image_data: Record<string, ArticleEntry>) {
+function addImageData(aid: number, image: Image, image_data: Record<string, ArticleEntry>) {
 	image_data[aid].images_published += 1;
 
 	if (image && image.alt && image.alt.length > 0) {
 		image_data[aid].images_published_with_alt_text += 1;
 	}
-}
-
-function parseBlockData(aid: number, block: Block, image_data: Record<string, ArticleEntry>) {
-	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
-		parseImageData(aid, block.data, image_data);
-	} else if (block.blockName == 'core/gallery') {
-		block.innerBlocks.forEach((block) => {
-			if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
-				parseImageData(aid, block.data, image_data);
-			}
-		});
-	} else if (
-		(block.blockName == 'jetpack/tiled-gallery' || block.blockName == 'jetpack/slideshow') &&
-		Array.isArray(block.data)
-	) {
-		block.data.forEach((image: Image) => {
-			parseImageData(aid, image, image_data);
-		});
-	} else if (block.blockName == 'jetpack/image-compare' && Array.isArray(block.data)) {
-		block.data.forEach((image: Image) => {
-			parseImageData(aid, image, image_data);
-		});
-	} else if (
-		block.blockName == 'core/columns' ||
-		block.blockName == 'core/column' ||
-		block.blockName == 'core/group'
-	) {
-		block.innerBlocks.forEach((block) => parseBlockData(aid, block, image_data));
-	}
-}
-
-function parseArticleData(post: Article, image_data: Record<string, ArticleEntry>) {
-	const [date] = post.date.split('T');
-
-	image_data[post.id] = {
-		date,
-		images_published: 0,
-		images_published_with_alt_text: 0,
-		categories: post.categories
-	};
-
-	// Add featured image data
-	parseImageData(post.id, post.image, image_data);
-
-	// Parse images within the article itself
-	post.content.forEach((block: Block) => {
-		parseBlockData(post.id, block, image_data);
-	});
 }
 
 async function parsePostQuery(
@@ -90,9 +43,14 @@ async function parsePostQuery(
 		.then((query) => {
 			total_pages = query.total_pages;
 			query.posts.forEach((post: Article) => {
-				if (post.content) {
-					parseArticleData(post, image_data);
-				}
+				image_data[post.id] = {
+					date: post.date.split('T')[0],
+					images_published: 0,
+					images_published_with_alt_text: 0,
+					categories: post.categories
+				};
+
+				parseArticle(post.image, post.content ?? [], (i: Image) => addImageData(post.id, i, image_data));
 			});
 		})
 		.catch((error: Error) => {
@@ -135,8 +93,7 @@ export default {
 
 		const batchUpdate: Array<D1PreparedStatement> = [];
 
-		Object.keys(image_data).forEach((aid) => {
-			const entry: ArticleEntry = image_data[aid];
+		Object.entries(image_data).forEach(([aid, entry]) => {
 			batchUpdate.push(
 				stmt.bind(
 					aid,

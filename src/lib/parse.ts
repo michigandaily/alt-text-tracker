@@ -6,13 +6,19 @@ function addImageWithoutAltText(image: Image, imageList: Array<Image>) {
 	}
 }
 
-function parseBlock(block: Block, images: Array<Image>) {
+export function parseContent(image: Image, content: Array<Block>) {
+	const images: Array<Image> = [];
+	parseArticle(image, content, (i: Image) => addImageWithoutAltText(i, images));
+	return images;
+}
+
+function parseBlock(block: Block, handleImage: (i: Image) => void) {
 	if (block.blockName == 'core/image' && !Array.isArray(block.data)) {
-		addImageWithoutAltText(block.data, images);
+		handleImage(block.data);
 	} else if (block.blockName == 'core/gallery') {
 		block.innerBlocks.forEach((block) => {
 			if (block.blockName === 'core/image' && !Array.isArray(block.data)) {
-				addImageWithoutAltText(block.data, images);
+				handleImage(block.data);
 			}
 		});
 	} else if (
@@ -20,36 +26,34 @@ function parseBlock(block: Block, images: Array<Image>) {
 		Array.isArray(block.data)
 	) {
 		block.data.forEach((image: Image) => {
-			addImageWithoutAltText(image, images);
+			handleImage(image);
 		});
 	} else if (block.blockName == 'jetpack/image-compare' && Array.isArray(block.data)) {
 		block.data.forEach((image: Image) => {
-			addImageWithoutAltText(image, images);
+			handleImage(image);
 		});
-	} else if (block.blockName == 'core/columns' || block.blockName == 'core/column' || block.blockName == 'core/group') {
-		block.innerBlocks.forEach((block) => parseBlock(block, images));
+	} else if (
+		block.blockName == 'core/columns' ||
+		block.blockName == 'core/column' ||
+		block.blockName == 'core/group'
+	) {
+		block.innerBlocks.forEach((block) => parseBlock(block, handleImage));
 	}
 }
 
-// Worker uses a similar way of parsing image content. Is there a way
-// to prevent code duplication?
-export function parseContent(image: Image, content: Array<Block>) {
-	const images: Array<Image> = [];
+export function parseArticle(image: Image, content: Array<Block>, handleImage: (i: Image) => void) {
+	handleImage(image);
 
-	addImageWithoutAltText(image, images);
 	content.forEach((block: Block) => {
-		parseBlock(block, images);
+		parseBlock(block, handleImage);
 	});
-
-	return images;
 }
 
 export function parseSources(image: Image) {
 	if (!image) return null;
 	return image.sources
 		.map(
-			(source: { uri: string; width: number; height: number }) =>
-				`${source.uri} ${source.width}w `
+			(source: { uri: string; width: number; height: number }) => `${source.uri} ${source.width}w `
 		)
-		.join(",");
+		.join(',');
 }
