@@ -57,3 +57,18 @@ export function parseSources(image: Image) {
 		)
 		.join(',');
 }
+
+export function parseAuthors(authors:Array<{display_name: string }>) {
+	if (authors.length === 0) {
+		return "";
+	}
+
+	if (authors.length === 1) {
+	  return authors.at(0)!.display_name;
+	}
+  
+	return `${authors
+	  .slice(0, -1)
+	  .map((author) => author.display_name)
+	  .join(", ")} and ${authors.at(-1)!.display_name}`;
+  }
