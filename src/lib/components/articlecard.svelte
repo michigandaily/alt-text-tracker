@@ -26,7 +26,7 @@
 			</span>
 		{/if}
 	</p>
-	<a style="text-decoration: none;" href={article.permalink}>
+	<a style="text-decoration: none; font-family: 'Lora'" href={article.permalink}>
 		<p style="margin-bottom: 0.5rem; margin-top: 1rem;">
 			<b>
 				{@html article.title}
@@ -98,6 +98,7 @@
 		color: white;
 		font-size: 12px;
 		font-weight: 700;
+		text-transform: uppercase;
 
 		padding: 0.5rem;
 	}
