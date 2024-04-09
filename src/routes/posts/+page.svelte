@@ -149,7 +149,7 @@
 		place-content: start;
 		gap: 1.5rem;
 
-		aspect-ratio: 2/2.75;
+		aspect-ratio: 2/3;
 		width: 100%;
 		border-radius: 10px;
 
