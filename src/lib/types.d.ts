@@ -20,6 +20,8 @@ export interface Article {
 	title: string;
 	permalink: string;
 	date: string;
+	authors: { display_name: string }[]
+	category: { parent: string, primary: string};
 	image: Image;
 	content: Array<Block>;
 }
@@ -38,4 +40,11 @@ export interface Block {
 	data: Array<Image> | Image;
 	innerContent: Array<string>;
 	innerBlocks: Array<Block>;
+}
+
+interface DateStringOptions {
+	weekday: 'long' | 'short' | 'narrow' | undefined;
+	year: 'numeric' | '2-digit' | undefined;
+	month: 'long' | 'short' | 'narrow' | 'numeric' | '2-digit' | undefined;
+	day: 'numeric' | '2-digit' | undefined;
 }

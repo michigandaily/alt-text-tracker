@@ -137,8 +137,6 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
 
-		place-items: center;
-
 		gap: 15px;
 		padding: 15px;
 	}
@@ -146,13 +144,14 @@
 	li {
 		display: grid;
 		box-sizing: border-box;
-		padding: 10px;
+		padding: 1.2rem;
+		
+		place-content: start;
+		gap: 1.5rem;
 
-		aspect-ratio: 2/2.75;
+		aspect-ratio: 2/3;
 		width: 100%;
 		border-radius: 10px;
-		place-items: center;
-		place-content: center;
 
 		background: var(--secondary-color-theme);
 	}
