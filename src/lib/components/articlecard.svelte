@@ -103,7 +103,7 @@
 	}
 	.subtitle {
 		font-size: 15px;
-		color: rgb(180, 180, 180);
+		color: var(--secondary-text-color-theme);
 	}
 	.arrow {
 		position: absolute;
