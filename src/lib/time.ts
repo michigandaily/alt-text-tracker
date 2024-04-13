@@ -7,7 +7,8 @@ export const lastYear = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 100
 export const all = new Date('2022-12-31');
 
 export function formatISODate(date: string, { weekday, year, month, day }: DateStringOptions) {
-	return new Date(new Date(date).getTime() + 5 * 60 * 60 * 1000).toLocaleDateString('en-us', {
+	return new Date(date).toLocaleDateString('en-us', {
+		timeZone: "UTC",
 		weekday,
 		year,
 		month,
