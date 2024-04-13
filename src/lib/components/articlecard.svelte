@@ -37,7 +37,7 @@
 		by {parseAuthors(article.authors)}
 	</p>
 	<time datetime={article.date} class="subtitle">
-		{formatISODate(article.date, {
+		{formatISODate(article.date.split('T')[0], {
 			weekday: undefined,
 			month: 'long',
 			year: 'numeric',
