@@ -45,7 +45,7 @@ function formatBlock(date: string, data: Record<string, ArticleEntry>) {
 			type: 'section',
 			text: {
 				type: 'mrkdwn',
-				text: `<!channel> ⚠️ *Action Recommended:* More than 20 images from <!date^${(new Date(date).getTime() + 5 * 60 * 60 * 1000) / 1000}^{date_pretty}|${date}> do not have alt text.`
+				text: `<!channel> ⚠️ *Action Recommended:* More than 20 images from yesterday do not have alternative text.`
 			}
 		}
 	];
