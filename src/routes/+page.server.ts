@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const after = url.searchParams.get('after') ??  lastMonth.toISOString().split('T')[0];
 
 	const resp = await platform?.env.DB.prepare(
-		'SELECT date, images_published, images_published_with_alt_text, categories FROM articles WHERE date > ? ORDER BY date ASC'
+		'SELECT date, images_published, images_published_with_alt_text, categories FROM articles WHERE date > ?'
 	).bind(after).all();
 
 	return {

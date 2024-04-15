@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	WHERE images_published_with_alt_text != images_published
 	AND (?1 IS NULL OR ?1 IN (SELECT value FROM json_each(categories)))
 	AND date >= ?2 AND date <= ?3
-	ORDER BY date DESC LIMIT ?4 * 18, 18`;
+	ORDER BY aid DESC, date DESC LIMIT ?4 * 18, 18`;
 
 	const response = await platform?.env.DB.prepare(query).bind(category, start, end, page).all();
 
