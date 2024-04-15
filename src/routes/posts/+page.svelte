@@ -40,6 +40,8 @@
 		</div>
 		<a
 			id="apply"
+			data-sveltekit-preload-data="false"
+			data-sveltekit-preload-code="false"
 			href={`posts?page=${data.page}
 				${category ? `&category=${category}` : ''}
 				${start ? `&start=${start}` : ''}
@@ -54,6 +56,8 @@
 	>
 		{#if data.page > 0}
 			<a
+				data-sveltekit-preload-data="false"
+				data-sveltekit-preload-code="false"
 				href={`/posts/?page=${data.page - 1}
 				${category ? `&category=${data.category}` : ''}
 				${start ? `&start=${data.start}` : ''}
@@ -62,6 +66,8 @@
 		{/if}
 		{#if data.articles.length === 18}
 			<a
+				data-sveltekit-preload-data="false"
+				data-sveltekit-preload-code="false"
 				href={`/posts/?page=${data.page + 1}
 				${category ? `&category=${data.category}` : ''}
 				${start ? `&start=${data.start}` : ''}
@@ -91,6 +97,8 @@
 <nav style="display: flex; justify-content: center; gap: 15px; padding: 1rem; font-size: 1.25rem;">
 	{#if data.page > 0}
 		<a
+			data-sveltekit-preload-data="false"
+			data-sveltekit-preload-code="false"
 			href={`/posts/?page=${data.page - 1}
 			${category ? `&category=${data.category}` : ''}
 			${start ? `&start=${data.start}` : ''}
@@ -99,6 +107,8 @@
 	{/if}
 	{#if data.articles.length === 18}
 		<a
+			data-sveltekit-preload-data="false"
+			data-sveltekit-preload-code="false"
 			href={`/posts/?page=${data.page + 1}
 			${category ? `&category=${data.category}` : ''}
 			${start ? `&start=${data.start}` : ''}
@@ -145,7 +155,7 @@
 		display: grid;
 		box-sizing: border-box;
 		padding: 1.2rem;
-		
+
 		place-content: start;
 		gap: 1.5rem;
 
