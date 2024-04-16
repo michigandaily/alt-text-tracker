@@ -13,10 +13,11 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const cache = platform.caches.default;
 
 	const cacheResp = await cache.match(url);
-	console.log(cacheResp);
-	if (cacheResp) {
+	const entries = await cacheResp?.json();
+
+	if (entries) {
 		return {
-			entries: cacheResp.body,
+			entries,
 			after
 		};
 	}
