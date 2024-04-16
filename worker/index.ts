@@ -13,6 +13,7 @@
  */
 
 import { parseArticle } from '$lib/parse';
+import { D1CacheName } from '$lib/storage';
 import { sendReport } from './messaging';
 import type { Article, Image, ArticleEntry, PostsQuery } from './types';
 
@@ -50,7 +51,9 @@ async function parsePostQuery(
 					categories: post.categories
 				};
 
-				parseArticle(post.image, post.content ?? [], (i: Image) => addImageData(post.id, i, image_data));
+				parseArticle(post.image, post.content ?? [], (i: Image) =>
+					addImageData(post.id, i, image_data)
+				);
 			});
 		})
 		.catch((error: Error) => {
@@ -108,12 +111,21 @@ export default {
 		const info = await env.DB.batch(batchUpdate);
 
 		if (env.PRODUCTION) {
+			// TODO: Invalidate production cache
+
+			// Send slack report
 			const [yesterday] = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 				.toISOString()
 				.split('T');
 
 			const resp = await sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data });
 			console.log(resp);
+		} else {
+			// Invalidate development cache
+			const invalidate_status = await (
+				await caches.open(D1CacheName)
+			).delete('http://localhost:8788/');
+			console.log(invalidate_status);
 		}
 
 		console.log(info);
