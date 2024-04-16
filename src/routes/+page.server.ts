@@ -16,8 +16,9 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const entries = await cacheResp?.json();
 
 	if (entries) {
+		console.log("Returning without entries:", entries)
 		return {
-			entries,
+			entries: [],
 			after
 		};
 	}
