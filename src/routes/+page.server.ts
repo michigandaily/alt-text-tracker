@@ -12,17 +12,6 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 
 	const cache = platform.caches.default;
 
-	const cacheResp = await cache.match(url);
-	const entries = await cacheResp?.json();
-
-	if (entries) {
-		console.log("Returning without entries:", entries)
-		return {
-			entries: [],
-			after
-		};
-	}
-
 	const resp = await platform.env.DB.prepare(
 		'SELECT date, images_published, images_published_with_alt_text, categories FROM articles WHERE date > ?'
 	)
@@ -30,7 +19,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		.all();
 
 	const cacheEntry = new Response(JSON.stringify(resp.results));
-	cacheEntry.headers.append('Cache-Control', 's-maxage=100');
+	cacheEntry.headers.append('Cache-Control', 's-maxage=10');
 
 	await cache.put(url, cacheEntry);
 
