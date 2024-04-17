@@ -14,11 +14,12 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const after = url.searchParams.get('after') ?? lastMonth.toISOString().split('T')[0];
 	const cache = await platform.caches.open(D1CacheName);
 
-	const entries = await cacheGet(url, cache);
+	const entries = await cacheGet(url, cache) as ArticleEntry[];
 	if (entries) {
 		return {
 			entries,
-			after
+			after,
+			cached: true,
 		};
 	}
 
@@ -35,7 +36,8 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	await cachePut(url, cache, response);
 
 	return {
-		entries: response.results as Array<ArticleEntry> | [],
-		after
+		entries: response.results as ArticleEntry[] | [],
+		after,
+		cached: false
 	};
 };
