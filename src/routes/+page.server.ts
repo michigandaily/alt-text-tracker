@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 			entries: cacheEntry.entries,
 			after,
 			cached: true,
-			production: platform.env.PRODUCTION,
+			origin: url.origin,
 		};
 	}
 
@@ -46,6 +46,6 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		entries: response.results as ArticleEntry[] | [],
 		after,
 		cached: false,
-		production: platform.env.PRODUCTION,
+		origin: url.origin,
 	};
 };
