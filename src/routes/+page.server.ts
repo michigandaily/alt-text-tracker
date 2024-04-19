@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 
-import { D1CacheName, cacheGet, cachePut} from '$lib/storage';
-import type { ArticleEntry } from '$lib/types';
+import { D1CacheName, cacheGet, cachePut } from '$lib/storage';
+import type { ArticleEntry, CacheResponse } from '$lib/types';
 import { lastMonth } from '$lib/time';
 
 import { error } from '@sveltejs/kit';
@@ -14,12 +14,13 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	const after = url.searchParams.get('after') ?? lastMonth.toISOString().split('T')[0];
 	const cache = await platform.caches.open(D1CacheName);
 
-	const entries = await cacheGet(url, cache) as ArticleEntry[];
-	if (entries) {
+	const cacheEntry = (await cacheGet(url.origin, cache)) as CacheResponse | undefined;
+
+	if (cacheEntry && cacheEntry.after! <= after) {
 		return {
-			entries,
+			entries: cacheEntry.entries,
 			after,
-			cached: true,
+			cached: true
 		};
 	}
 
@@ -33,7 +34,10 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		error(400, { message: response.error });
 	}
 
-	await cachePut(url, cache, response);
+	await cachePut(url.origin, cache, {
+		entries: response.results as ArticleEntry[] | [],
+		after
+	});
 
 	return {
 		entries: response.results as ArticleEntry[] | [],
