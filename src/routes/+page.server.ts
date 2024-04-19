@@ -34,10 +34,12 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		error(400, { message: response.error });
 	}
 
-	await cachePut(url.origin, cache, {
-		entries: response.results as ArticleEntry[] | [],
-		after
-	});
+	platform.context.waitUntil(
+		cachePut(url.origin, cache, {
+			entries: response.results as ArticleEntry[] | [],
+			after
+		})
+	);
 
 	return {
 		entries: response.results as ArticleEntry[] | [],

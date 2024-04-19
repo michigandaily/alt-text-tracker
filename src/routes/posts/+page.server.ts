@@ -99,7 +99,7 @@ export const actions: Actions = {
 
 		const cache = await platform.caches.open(D1CacheName);
 		const baseUrl = +platform.env.PRODUCTION ? url : 'http://localhost:8788';
-		await cacheInvalidate([baseUrl], cache);
+		platform.context.waitUntil(cacheInvalidate([baseUrl], cache));
 
 		redirect(304, String(data.get('path')));
 	}
