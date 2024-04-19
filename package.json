@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"worker": "npx wrangler dev --env local --test-scheduled",
-		"emulate": "vite build -w & npx wrangler pages dev .svelte-kit/cloudflare --live-reload --local --binding PRODUCTION=0 --d1 DB=DB",
+		"emulate": "vite build -w & npx wrangler pages dev .svelte-kit/cloudflare --live-reload --local --binding PRODUCTION=false --d1 DB=DB",
 		"init": "./bin/init",
 		"update": "./bin/update",
 		"clear": "./bin/clear",
