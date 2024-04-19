@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types';
 
 import { parseContent } from '$lib/parse';
 import type { Article } from '$lib/types';
-import { D1CacheName, cacheInvalidate, url } from '$lib/storage';
+import { D1CacheName, cacheInvalidate } from '$lib/storage';
 
 export const load: PageServerLoad = async ({ platform, url }) => {
 	const page = parseInt(url.searchParams.get('page') ?? '0');
@@ -58,7 +58,7 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 };
 
 export const actions: Actions = {
-	update: async ({ request, platform }) => {
+	update: async ({ request, platform, url }) => {
 		if (platform === undefined) {
 			error(400, { message: 'Platform undefined' });
 		}
@@ -98,7 +98,7 @@ export const actions: Actions = {
 		}
 
 		const cache = await platform.caches.open(D1CacheName);
-		const baseUrl = platform.env.PRODUCTION === 'false' ? 'http://localhost:8788' : url;
+		const baseUrl = platform.env.PRODUCTION === 'true' ?  url.origin : 'http://localhost:8788';
 		platform.context.waitUntil(cacheInvalidate([baseUrl], cache));
 
 		redirect(304, String(data.get('path')));
