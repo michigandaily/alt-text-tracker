@@ -8,6 +8,7 @@ declare global {
 		interface Platform {
 			env: {
 				DB: D1Database;
+				PRODUCTION: boolean;
 			};
 			context: {
 				waitUntil(promise: Promise<unknown>): void;
