@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ platform, url }) => {
 	if (platform === undefined) {
-		error(404, { message: 'Platform is undefined' });
+		error(400, { message: 'Platform is undefined' });
 	}
 
 	const after = url.searchParams.get('after') ?? lastMonth.toISOString().split('T')[0];
@@ -20,7 +20,8 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		return {
 			entries: cacheEntry.entries,
 			after,
-			cached: true
+			cached: true,
+			origin: url.origin,
 		};
 	}
 
@@ -34,14 +35,17 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 		error(400, { message: response.error });
 	}
 
-	await cachePut(url.origin, cache, {
-		entries: response.results as ArticleEntry[] | [],
-		after
-	});
+	platform.context.waitUntil(
+		cachePut(url.origin, cache, {
+			entries: response.results as ArticleEntry[] | [],
+			after
+		})
+	);
 
 	return {
 		entries: response.results as ArticleEntry[] | [],
 		after,
-		cached: false
+		cached: false,
+		origin: url.origin,
 	};
 };
