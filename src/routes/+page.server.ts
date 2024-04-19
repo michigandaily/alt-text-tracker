@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ platform, url }) => {
 	if (platform === undefined) {
-		error(404, { message: 'Platform is undefined' });
+		error(400, { message: 'Platform is undefined' });
 	}
 
 	const after = url.searchParams.get('after') ?? lastMonth.toISOString().split('T')[0];
