@@ -1,7 +1,7 @@
 import type { CacheResponse } from './types';
 
 export const D1CacheName = 'd1-michigan-daily-alt-text-tracker';
-export const url = 'https://michigan-daily-alt-text-tracker.pages.dev/';
+export const url = 'https://michigan-daily-alt-text-tracker.pages.dev';
 
 export const cachePut = async (url: URL | string, cache: Cache, response: CacheResponse) => {
 	const entry = new Response(JSON.stringify(response));
