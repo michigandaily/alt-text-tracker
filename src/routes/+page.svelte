@@ -9,6 +9,7 @@
 
 	export let data;
 	$: console.log("D1 Cached Status:", data.cached);
+	$: console.log("Production: ", data.production)
 
 	$: entries = data.entries;
 
