@@ -9,7 +9,8 @@
 
 	export let data;
 	$: console.log("D1 Cached Status:", data.cached);
-	$: entries = data?.entries;
+
+	$: entries = data.entries;
 
 	let timerange = data.after ? new Date(data.after) : lastMonth;
 	$: category = null;
