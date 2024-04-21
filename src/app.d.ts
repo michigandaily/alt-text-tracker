@@ -8,6 +8,7 @@ declare global {
 		interface Platform {
 			env: {
 				DB: D1Database;
+				CACHEKEY: string;
 				PRODUCTION: string;
 			};
 			context: {
