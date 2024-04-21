@@ -16,3 +16,10 @@ export function formatISODate(
 		day
 	});
 }
+
+export function secondsBeforeCronTrigger() {
+	const date = new Date();
+	if (date.getUTCHours() >= 16) date.setUTCDate(date.getUTCDate() + 1)
+	date.setUTCHours(16, 1, 0, 0);
+	return (date.getTime() - new Date().getTime()) / 1000;
+}
