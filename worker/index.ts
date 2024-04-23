@@ -119,10 +119,5 @@ export default {
 
 			ctx.waitUntil(emitLog(sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data })));
 		}
-
-		// Invalidate caches
-		const baseUrl = env.PRODUCTION ? url : 'http://localhost:8788';
-		const cache = await caches.open(D1CacheName);
-		ctx.waitUntil(emitLog(cacheInvalidate([baseUrl], cache)));
 	}
 };
