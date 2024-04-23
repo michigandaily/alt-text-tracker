@@ -13,7 +13,6 @@
  */
 
 import { parseArticle } from '$lib/parse';
-import { D1CacheName, cacheInvalidate, url } from '$lib/storage';
 import { sendReport } from './messaging';
 import type { Article, Image, ArticleEntry, PostsQuery } from './types';
 
