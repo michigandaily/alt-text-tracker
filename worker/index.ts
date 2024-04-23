@@ -50,7 +50,9 @@ async function parsePostQuery(
 					categories: post.categories
 				};
 
-				parseArticle(post.image, post.content ?? [], (i: Image) => addImageData(post.id, i, image_data));
+				parseArticle(post.image, post.content ?? [], (i: Image) =>
+					addImageData(post.id, i, image_data)
+				);
 			});
 		})
 		.catch((error: Error) => {
@@ -59,7 +61,11 @@ async function parsePostQuery(
 	return total_pages;
 }
 
-export interface Env {
+async function emitLog(promise: Promise<unknown>) {
+	console.log(await promise);
+}
+
+interface Env {
 	DB: D1Database;
 	PRODUCTION: boolean;
 	SLACK_WEBHOOK: string;
@@ -68,54 +74,49 @@ export interface Env {
 export default {
 	// The scheduled handler is invoked at the interval set in our wrangler.toml's
 	// [[triggers]] configuration.
-	async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
-		const image_data: Record<string, ArticleEntry> = {};
-
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
 		// Get the date of the latest entry, and start fetching data at the date
 		const DB_resp: Record<string, string> | null = await env.DB.prepare(
 			`SELECT MAX(date) FROM articles`
 		).first();
-
 		const after: string = DB_resp ? DB_resp['MAX(date)'] ?? '2022-12-31' : '2022-12-31';
 
+		const image_data: Record<string, ArticleEntry> = {};
 		const total_pages = await parsePostQuery(0, after, image_data);
-
 		for (let i = 1; i < total_pages; ++i) {
 			await parsePostQuery(i, after, image_data);
 		}
 
-		// Batch insert/update all date entries
 		const stmt = env.DB.prepare(
 			`INSERT OR IGNORE INTO articles
 			(aid, date, images_published, images_published_with_alt_text, categories) VALUES
 			(?, ?, ?, ?, ?)`
 		);
 
-		const batchUpdate: Array<D1PreparedStatement> = [];
-
-		Object.entries(image_data).forEach(([aid, entry]) => {
-			batchUpdate.push(
-				stmt.bind(
-					aid,
-					entry.date,
-					entry.images_published,
-					entry.images_published_with_alt_text,
-					JSON.stringify(entry.categories)
+		// Batch insert all date entries
+		ctx.waitUntil(
+			emitLog(
+				env.DB.batch(
+					Object.entries(image_data).map(([aid, entry]) =>
+						stmt.bind(
+							aid,
+							entry.date,
+							entry.images_published,
+							entry.images_published_with_alt_text,
+							JSON.stringify(entry.categories)
+						)
+					)
 				)
-			);
-		});
+			)
+		);
 
-		const info = await env.DB.batch(batchUpdate);
-
+		// Send slack report
 		if (env.PRODUCTION) {
 			const [yesterday] = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 				.toISOString()
 				.split('T');
 
-			const resp = await sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data });
-			console.log(resp);
+			ctx.waitUntil(emitLog(sendReport(env.SLACK_WEBHOOK, { date: yesterday, data: image_data })));
 		}
-
-		console.log(info);
 	}
 };

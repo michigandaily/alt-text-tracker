@@ -1,16 +1,49 @@
 import type { PageServerLoad } from './$types';
-import type { ArticleEntry } from '$lib/types';
+
+import { D1CacheName, cacheGet, cachePut } from '$lib/storage';
+import type { ArticleEntry, CacheResponse } from '$lib/types';
 import { lastMonth } from '$lib/time';
 
-export const load: PageServerLoad = async ({ platform, url }) => {
-	const after = url.searchParams.get('after') ??  lastMonth.toISOString().split('T')[0];
+import { error } from '@sveltejs/kit';
 
-	const resp = await platform?.env.DB.prepare(
+export const load: PageServerLoad = async ({ platform, url }) => {
+	if (platform === undefined) {
+		error(400, { message: 'Platform is undefined' });
+	}
+
+	const after = url.searchParams.get('after') ?? lastMonth.toISOString().split('T')[0];
+	const cache = await platform.caches.open(D1CacheName);
+
+	const cacheEntry = (await cacheGet(url.origin, cache)) as CacheResponse | undefined;
+
+	if (cacheEntry && cacheEntry.after! <= after) {
+		return {
+			entries: cacheEntry.entries,
+			after,
+			cached: true
+		};
+	}
+
+	const response = await platform.env.DB.prepare(
 		'SELECT date, images_published, images_published_with_alt_text, categories FROM articles WHERE date > ?'
-	).bind(after).all();
+	)
+		.bind(after)
+		.all();
+
+	if (response.error) {
+		error(400, { message: response.error });
+	}
+
+	platform.context.waitUntil(
+		cachePut(url.origin, cache, {
+			entries: response.results as ArticleEntry[] | [],
+			after
+		})
+	);
 
 	return {
-		entries: resp?.results as Array<ArticleEntry> | [],
-		after 
+		entries: response.results as ArticleEntry[] | [],
+		after,
+		cached: false
 	};
 };

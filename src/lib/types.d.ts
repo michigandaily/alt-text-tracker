@@ -42,9 +42,8 @@ export interface Block {
 	innerBlocks: Array<Block>;
 }
 
-interface DateStringOptions {
-	weekday: 'long' | 'short' | 'narrow' | undefined;
-	year: 'numeric' | '2-digit' | undefined;
-	month: 'long' | 'short' | 'narrow' | 'numeric' | '2-digit' | undefined;
-	day: 'numeric' | '2-digit' | undefined;
+export interface CacheResponse {
+	entries: ArticleEntry[];
+	after?: string;
+	before?: string;
 }

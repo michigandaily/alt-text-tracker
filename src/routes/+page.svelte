@@ -8,7 +8,9 @@
 	import { lastWeek, lastMonth, lastSixMonths, lastYear, all } from '$lib/time.js';
 
 	export let data;
-	$: entries = data?.entries;
+	$: console.log("D1 Cached Status:", data.cached);
+
+	$: entries = data.entries;
 
 	let timerange = data.after ? new Date(data.after) : lastMonth;
 	$: category = null;
@@ -20,7 +22,8 @@
 
 	$: tidy = entries.filter(
 		(entry) =>
-			new Date(entry.date) >= timerange && (category ? JSON.parse(entry.categories).includes(category) : true)
+			new Date(entry.date) >= timerange &&
+			(category ? JSON.parse(entry.categories).includes(category) : true)
 	);
 
 	$: index = d3.rollup(
