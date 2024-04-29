@@ -14,9 +14,13 @@
 
 import { parseArticle } from '$lib/parse';
 import { sendReport } from './messaging';
-import type { Article, Image, ArticleEntry, PostsQuery } from './types';
 
-function addImageData(aid: number, image: Image, image_data: Record<string, ArticleEntry>) {
+import type { ImageData } from '@michigandaily/wputils';
+import type { ArticleEntry as Entry, ArticleQuery, PostsQuery } from '$lib/types';
+
+type ArticleEntry = Omit<Entry, 'categories'> & { categories: number[] };
+
+function addImageData(aid: string, image: ImageData, image_data: Record<string, ArticleEntry>) {
 	image_data[aid].images_published += 1;
 
 	if (image && image.alt && image.alt.length > 0) {
@@ -42,7 +46,7 @@ async function parsePostQuery(
 		})
 		.then((query) => {
 			total_pages = query.total_pages;
-			query.posts.forEach((post: Article) => {
+			query.posts.forEach((post: ArticleQuery) => {
 				image_data[post.id] = {
 					date: post.date.split('T')[0],
 					images_published: 0,
@@ -50,7 +54,7 @@ async function parsePostQuery(
 					categories: post.categories
 				};
 
-				parseArticle(post.image, post.content ?? [], (i: Image) =>
+				parseArticle(post.image, post.content ?? [], (i: ImageData) =>
 					addImageData(post.id, i, image_data)
 				);
 			});

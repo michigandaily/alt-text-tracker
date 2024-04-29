@@ -40,6 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@michigandaily/wputils": "github:michigandaily/wputils",
 		"d3": "^7.9.0"
 	}
 }

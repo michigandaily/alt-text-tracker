@@ -1,4 +1,12 @@
 import type { InternSet } from "d3";
+import type { Article } from '@michigandaily/wputils';
+
+export type ArticleQuery = Article & { categories: number[]}
+
+export interface PostsQuery {
+	posts: Array<ArticleQuery>;
+	total_pages: number;
+}
 
 export interface ArticleEntry {
 	date: string;
@@ -13,33 +21,6 @@ export interface GraphData {
 	images_published: number;
 	images_published_with_alt_text: number;
 	categories: InternSet<string>;
-}
-
-export interface Article {
-	id: number;
-	title: string;
-	permalink: string;
-	date: string;
-	authors: { display_name: string }[]
-	category: { parent: string, primary: string};
-	image: Image;
-	content: Array<Block>;
-}
-
-export interface Image {
-	sources: Array<{
-		uri: string;
-		width: number;
-		height: number;
-	}>;
-	alt: string;
-}
-
-export interface Block {
-	blockName: string;
-	data: Array<Image> | Image;
-	innerContent: Array<string>;
-	innerBlocks: Array<Block>;
 }
 
 export interface CacheResponse {
