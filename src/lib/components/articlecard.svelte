@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { parseAuthors, parseContent, parseSources } from '$lib/parse';
 	import { formatISODate } from '$lib/time';
-	import type { Article } from '$lib/types';
+	import type { Article } from '@michigandaily/wputils';
 
 	export let article: Article;
 	export let path: string;
