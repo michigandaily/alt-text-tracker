@@ -1,5 +1,7 @@
 import { formatISODate } from '$lib/time';
-import type { ArticleEntry } from './types';
+import type { ArticleEntry as Entry } from '$lib/types';
+
+type ArticleEntry = Omit<Entry, 'categories'> & { categories: number[] };
 
 export async function sendReport(
 	url: string,
