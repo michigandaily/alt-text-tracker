@@ -28,18 +28,23 @@
 			{/if}
 		</li>
 	</ul>
-	<hr />
 </nav>
 <main>
 	<slot />
 </main>
 
 <style>
+	nav {
+		padding: 0.5rem;
+		border-bottom: solid 1px var(--secondary-color-theme);
+	}
+
 	h1 {
 		font-size: 1.1rem;
 	}
 
 	ul {
+		margin: 0;
 		list-style: none;
 
 		display: grid;
