@@ -5,7 +5,10 @@ set -Eeuo pipefail
 echo "Initializing project with local database..."
 
 echo "Running migrations..."
-npx wrangler d1 migrations apply michigan-daily-alt-text-tracker --local
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --file=migrations/000-init.sql
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --file=migrations/001-alter.sql
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --file=migrations/002-alter.sql
+npx wrangler d1 execute michigan-daily-alt-text-tracker --local --file=migrations/003-alter.sql
 echo "Successfully ran migrations! ✅"
 
 echo "Setting up a localhost worker and running cron job to populate database..."
