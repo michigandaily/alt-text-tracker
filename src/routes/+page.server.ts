@@ -25,7 +25,10 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 	}
 
 	const response = await platform.env.DB.prepare(
-		'SELECT date, images_published, images_published_with_alt_text, categories FROM articles WHERE date > ?'
+		`SELECT date, images_published, images_published_with_alt_text, categories 
+		FROM articles 
+		WHERE date > ? 
+		ORDER BY date ASC`
 	)
 		.bind(after)
 		.all();
