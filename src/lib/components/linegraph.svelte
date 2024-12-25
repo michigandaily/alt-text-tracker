@@ -42,12 +42,12 @@
 			d3.select('#label')
 				.attr('x', x(new Date(data.date)) - 400)
 				.attr('y', y(data.value))
-				.text(`On ${data.date}, the averge % of images with alt text is ${data.value.toFixed(2)}%`);
+				.text(`On ${data.date}, the average % of images with alt text is ${data.value.toFixed(2)}%`);
 		} else {
 			d3.select('#label')
 				.attr('x', x(new Date(data.date)))
 				.attr('y', y(data.value))
-				.text(`On ${data.date}, the averge % of images with alt text is ${data.value.toFixed(2)}%`);
+				.text(`On ${data.date}, the average % of images with alt text is ${data.value.toFixed(2)}%`);
 		}
 	}
 
