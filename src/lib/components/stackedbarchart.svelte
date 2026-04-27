@@ -33,24 +33,23 @@
 			Math.abs(new Date(data.date).getTime() - latest.getTime())
 		) {
 			d3.select('#tooltip')
-			.style('opacity', '1')
-			.style('left', d.pageX - 175 + 'px')
-			.style('top', d.pageY - height  + 'px')
-			.text(
-				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
+				.style('opacity', '1')
+				.style('left', d.pageX - 175 + 'px')
+				.style('top', d.pageY - height + 'px')
+				.text(
+					`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
                 had alt text (${((data.values.images_published_with_alt_text / data.values.images_published) * 100).toFixed(2)}%)`
-			);
-		}
-		else {
+				);
+		} else {
 			d3.select('#tooltip')
-			.style('opacity', '1')
-			.style('left', d.pageX + 5 + 'px')
-			.style('top', d.pageY - height - 5 + 'px')
-			.text(
-				`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
+				.style('opacity', '1')
+				.style('left', d.pageX + 5 + 'px')
+				.style('top', d.pageY - height - 5 + 'px')
+				.text(
+					`On ${data.date}, ${data.values.images_published_with_alt_text} out of ${data.values.images_published} images 
                 had alt text (${((data.values.images_published_with_alt_text / data.values.images_published) * 100).toFixed(2)}%)`
-			);
-		}	
+				);
+		}
 
 		d3.selectAll('.stacked-bar').style('opacity', '0.25');
 		(d.target as SVGRectElement).style.opacity = '1';
@@ -112,9 +111,6 @@
 <style>
 	figure {
 		margin: 0;
-		border: 1px solid var(--text-color-theme);
-		border-radius: 1rem;
-		background: var(--secondary-color-theme);
 	}
 
 	#tooltip {

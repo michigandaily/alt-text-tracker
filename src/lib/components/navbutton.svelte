@@ -1,23 +1,28 @@
 <script lang="ts">
 	export let route: string;
 	export let title: string;
+
+	export let preload_data: string = 'true';
+	export let preload_code: string = 'true';
 </script>
 
-<a class="navbutton" href={route}>
+<a
+	data-sveltekit-preload-data={preload_data}
+	data-sveltekit-preload-code={preload_code}
+	class="navbutton"
+	href={route}
+>
 	{title}
 </a>
 
 <style>
 	.navbutton {
-		font-size: 14px;
+		font-size: 1rem;
 		width: 12rem;
 		aspect-ratio: 6/1;
 
 		color: inherit;
-		text-decoration-line: none;
-		border: 2px solid lightskyblue;
 		border-radius: 1rem;
-		background: var(--secondary-color-theme);
 
 		display: grid;
 		place-items: center;

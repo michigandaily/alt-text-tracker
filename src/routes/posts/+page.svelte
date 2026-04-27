@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ArticleCard from '$lib/components/articlecard.svelte';
+	import Navbutton from '$lib/components/navbutton.svelte';
 
 	export let data;
 
@@ -55,24 +56,26 @@
 		style="display: flex; justify-content: center; gap: 15px; padding: 1rem; font-size: 1.25rem;"
 	>
 		{#if data.page > 0}
-			<a
-				data-sveltekit-preload-data="false"
-				data-sveltekit-preload-code="false"
-				href={`/posts/?page=${data.page - 1}
-				${category ? `&category=${data.category}` : ''}
-				${start ? `&start=${data.start}` : ''}
-				${end ? `&end=${data.end}` : ''}`}>← Back</a
-			>
+			<Navbutton
+				title={'← back'}
+				preload_data="false"
+				preload_code="false"
+				route={`/posts/?page=${data.page - 1}
+			${category ? `&category=${data.category}` : ''}
+			${start ? `&start=${data.start}` : ''}
+			${end ? `&end=${data.end}` : ''}`}
+			/>
 		{/if}
 		{#if data.articles.length === 18}
-			<a
-				data-sveltekit-preload-data="false"
-				data-sveltekit-preload-code="false"
-				href={`/posts/?page=${data.page + 1}
-				${category ? `&category=${data.category}` : ''}
-				${start ? `&start=${data.start}` : ''}
-				${end ? `&end=${data.end}` : ''}`}>Next →</a
-			>
+			<Navbutton
+				title={'next →'}
+				preload_data="false"
+				preload_code="false"
+				route={`/posts/?page=${data.page + 1}
+			${category ? `&category=${data.category}` : ''}
+			${start ? `&start=${data.start}` : ''}
+			${end ? `&end=${data.end}` : ''}`}
+			/>
 		{/if}
 	</nav>
 	<ul>
@@ -96,28 +99,33 @@
 </section>
 <nav style="display: flex; justify-content: center; gap: 15px; padding: 1rem; font-size: 1.25rem;">
 	{#if data.page > 0}
-		<a
-			data-sveltekit-preload-data="false"
-			data-sveltekit-preload-code="false"
-			href={`/posts/?page=${data.page - 1}
+		<Navbutton
+			title={'← back'}
+			preload_data="false"
+			preload_code="false"
+			route={`/posts/?page=${data.page - 1}
 			${category ? `&category=${data.category}` : ''}
 			${start ? `&start=${data.start}` : ''}
-			${end ? `&end=${data.end}` : ''}`}>← Back</a
-		>
+			${end ? `&end=${data.end}` : ''}`}
+		/>
 	{/if}
 	{#if data.articles.length === 18}
-		<a
-			data-sveltekit-preload-data="false"
-			data-sveltekit-preload-code="false"
-			href={`/posts/?page=${data.page + 1}
+		<Navbutton
+			title={'next →'}
+			preload_data="false"
+			preload_code="false"
+			route={`/posts/?page=${data.page + 1}
 			${category ? `&category=${data.category}` : ''}
 			${start ? `&start=${data.start}` : ''}
-			${end ? `&end=${data.end}` : ''}`}>Next →</a
-		>
+			${end ? `&end=${data.end}` : ''}`}
+		/>
 	{/if}
 </nav>
 
 <style>
+	h1 {
+		font-size: 1.25rem;
+	}
 	input,
 	select {
 		display: inline-block;
@@ -128,7 +136,7 @@
 
 		color: var(--text-color-theme);
 		border: 0.5px solid var(--text-color-theme);
-		background: var(--secondary-color-theme);
+		background: var(--primary-color-theme);
 	}
 
 	#apply {
@@ -136,7 +144,6 @@
 		padding: 0.75rem;
 
 		font-size: 1rem;
-		border: 1px solid var(--text-color-theme);
 
 		color: var(--text-color-theme);
 		background: var(--secondary-color-theme);
@@ -147,8 +154,8 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
 
-		gap: 15px;
-		padding: 15px;
+		gap: 1rem;
+		padding: 0rem 1rem;
 	}
 
 	li {

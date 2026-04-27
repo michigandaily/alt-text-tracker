@@ -13,8 +13,8 @@
 					class="logo"
 					src={Logo}
 					alt="The Michigan Daily logo"
-					width="35px"
-					height="35px"
+					width="30px"
+					height="30px"
 					style="float: left; padding: 10px;"
 				/>
 				<h1>Alt Text Tracker</h1>
@@ -35,8 +35,12 @@
 
 <style>
 	nav {
-		padding: 0.5rem;
 		border-bottom: solid 1px var(--secondary-color-theme);
+
+		padding: 0 1.5rem;
+		min-height: 3.5rem;
+
+		align-content: center;
 	}
 
 	h1 {
@@ -44,6 +48,7 @@
 	}
 
 	ul {
+		padding: 0;
 		margin: 0;
 		list-style: none;
 
@@ -53,6 +58,5 @@
 
 	li:last-child {
 		place-self: center end;
-		padding: 10px;
 	}
 </style>

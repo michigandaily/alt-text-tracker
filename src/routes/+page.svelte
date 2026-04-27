@@ -8,7 +8,7 @@
 	import { lastWeek, lastMonth, lastSixMonths, lastYear, all } from '$lib/time.js';
 
 	export let data;
-	$: console.log("D1 Cached Status:", data.cached);
+	$: console.log('D1 Cached Status:', data.cached);
 
 	$: entries = data.entries;
 
@@ -19,6 +19,9 @@
 	$: innerHeight = 600;
 	$: width = innerWidth / 1.075;
 	$: height = innerHeight / 1.75;
+
+	$: graphWidth = width > 1000 ? width / 2 : width;
+	$: graphHeight = height > 1000 ? height / 2 : height;
 
 	$: tidy = entries.filter(
 		(entry) =>
@@ -91,28 +94,30 @@
 			</div>
 		</div>
 	</section>
-	<section>
-		<div class="legend">
-			<div class="legend-item">
-				<div style="background-color: lightgreen"></div>
-				<span>Images published with alternative text</span>
+	<div id="dashboard">
+		<section>
+			<div class="legend">
+				<div class="legend-item">
+					<div style="background-color: lightgreen"></div>
+					<small>Images published with alternative text</small>
+				</div>
+				<div class="legend-item">
+					<div style="background-color: lightcoral"></div>
+					<small>Images published without alternative text</small>
+				</div>
 			</div>
-			<div class="legend-item">
-				<div style="background-color: LightCoral"></div>
-				<span>Images published without alternative text</span>
+			<StackedBarChart width={graphWidth} height={graphHeight} {index} {category} />
+		</section>
+		<section>
+			<div class="legend">
+				<div class="legend-item">
+					<div style="background-color: steelblue;"></div>
+					<small>Percentage of images published with alternative text</small>
+				</div>
 			</div>
-		</div>
-		<StackedBarChart {width} {height} {index} {category} />
-	</section>
-	<section>
-		<div class="legend">
-			<div class="legend-item">
-				<div style="background-color: steelblue;"></div>
-				<span>Running average percentage of images published with alternative text</span>
-			</div>
-		</div>
-		<LineGraph {width} {height} {index} />
-	</section>
+			<LineGraph width={graphWidth} height={graphHeight} {index} />
+		</section>
+	</div>
 </main>
 
 <style>
@@ -132,8 +137,8 @@
 	}
 
 	.legend-item div {
-		width: 1rem;
-		height: 1rem;
+		width: 0.7rem;
+		height: 0.7rem;
 		display: inline-block;
 	}
 
@@ -145,12 +150,25 @@
 		width: 200px;
 
 		color: var(--text-color-theme);
-		background: var(--secondary-color-theme);
+		background: var(--primary-color-theme);
 	}
 
 	main {
 		display: grid;
 		gap: 1rem;
-		padding: 2rem;
+		padding: 0rem 2rem;
+	}
+
+	#dashboard {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		flex-wrap: wrap;
+	}
+
+	@media screen and (max-width: 800px) {
+		main {
+			padding: 0rem 1rem;
+		}
 	}
 </style>
