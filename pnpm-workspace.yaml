@@ -1,0 +1,6 @@
+engineStrict: true
+allowBuilds:
+  "@michigandaily/wputils": true
+  esbuild: true
+  sharp: false
+  workerd: false
