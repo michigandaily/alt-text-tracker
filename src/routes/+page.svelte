@@ -64,7 +64,7 @@
 					id="timerange"
 					bind:value={timerange}
 					on:change={() => {
-						if (earliest.getTime() > timerange.getTime()) {
+						if (earliest && earliest.getTime() > timerange.getTime()) {
 							goto(`/?after=${timerange.toISOString().split('T')[0]}`, { invalidateAll: true });
 						}
 						goto(`/?after=${timerange.toISOString().split('T')[0]}`);

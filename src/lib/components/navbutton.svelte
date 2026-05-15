@@ -2,8 +2,8 @@
 	export let route: string;
 	export let title: string;
 
-	export let preload_data: string = 'true';
-	export let preload_code: string = 'true';
+	export let preload_data: string = 'hover';
+	export let preload_code: string = 'hover';
 </script>
 
 <a
